@@ -1,8 +1,10 @@
 ## Project Specification and Documentation
 
-Put your project proposal in this folder and create a link from this [README](README.md).
+## Specification
 
-Do the same with project documentation later.
+See project [proposal](proposal.md)
+
+Todo link documentation
 
 ## How to compile
 
