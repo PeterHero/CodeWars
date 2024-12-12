@@ -11,3 +11,4 @@ Release
 x64
 *.user
 CMakeSettings.json
+.clangd
