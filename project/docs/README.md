@@ -21,9 +21,3 @@ cd build
 cmake ..
 cmake --build .
 ```
-
-## TODO
-
-Add copmilation script
-
-Add option to compile library separately and link it as dll for faster development.
