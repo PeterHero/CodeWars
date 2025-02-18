@@ -6,11 +6,20 @@ cmake_minimum_required (VERSION 3.20)
 
 project("hello_world")
 
-set(MY_EXE "hello")
-
 add_subdirectory(vendor/plog)
 
-add_executable(${MY_EXE} "hello_main.cpp" "hello_functions.cpp" "hello_functions.hpp")
+set(MY_EXE "hello")
+set(TARGET_H
+    "hello_functions.hpp"
+    "battle_controller.hpp"
+    )
+set(TARGET_SRC
+    "hello_main.cpp"
+    "hello_functions.cpp"
+    "battle_controller.cpp"
+    )
+
+add_executable(${MY_EXE} ${TARGET_H} ${TARGET_SRC})
 
 target_link_libraries(${MY_EXE} PRIVATE plog::plog)
 

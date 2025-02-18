@@ -1,5 +1,6 @@
 #include "hello_functions.hpp"
 
+#include "battle_controller.hpp"
 #include <iostream>
 
 int main(int argc, char **argv) {
@@ -11,5 +12,8 @@ int main(int argc, char **argv) {
   } catch (...) {
     std::cout << "Unknown exception." << std::endl;
   }
+
+  BattleController battle;
+  battle.print_battlefield();
   return 0; // return code 0 required for recodex success
 }
