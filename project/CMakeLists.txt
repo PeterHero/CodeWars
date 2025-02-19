@@ -6,7 +6,7 @@ cmake_minimum_required (VERSION 3.20)
 
 project("code_wars")
 
-add_subdirectory(src/vendor/plog)
+add_subdirectory(vendor/plog)
 
 set(MY_EXE "code_wars")
 set(INCLUDE_DIR "include")
