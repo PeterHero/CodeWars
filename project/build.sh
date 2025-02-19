@@ -5,7 +5,11 @@ git submodule update --init
 
 test -d build || mkdir build
 cd build
-cmake ..
-cmake --build .
 
-./code_wars
+if [ "${1:-NOTSET}" = "-d" ];then
+    cmake -DCMAKE_BUILD_TYPE=Debug ..
+else
+    cmake ..
+fi
+
+cmake --build .

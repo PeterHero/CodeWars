@@ -13,12 +13,10 @@ set(INCLUDE_DIR "include")
 set(SRC_DIR "src")
 
 set(TARGET_H
-    "${INCLUDE_DIR}/hello_functions.hpp"
     "${INCLUDE_DIR}/battle_controller.hpp"
     )
 set(TARGET_SRC
     "${SRC_DIR}/hello_main.cpp"
-    "${SRC_DIR}/hello_functions.cpp"
     "${SRC_DIR}/battle_controller.cpp"
     )
 
