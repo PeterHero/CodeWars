@@ -8,4 +8,4 @@ cd build
 cmake ..
 cmake --build .
 
-./hello
+./code_wars
