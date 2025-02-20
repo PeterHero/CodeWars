@@ -28,7 +28,8 @@ public:
   Direction get_look_dir();
   void turn_left();
   void turn_right();
-  bool get_shot();
+  void get_shot();
+  void heal_to_max();
   bool is_alive();
   void print(std::ostream &stream = std::cout);
 };
@@ -38,6 +39,13 @@ inline size_t Robot::get_y() { return _pos_y; }
 inline void Robot::set_x(size_t new_x) { _pos_x = new_x; }
 inline void Robot::set_y(size_t new_y) { _pos_y = new_y; }
 inline Direction Robot::get_look_dir() { return _look_dir; }
+
+inline void Robot::get_shot() {
+  _health = (_health > SHOT_DAMAGE) ? _health - SHOT_DAMAGE : 0;
+}
+
+inline void Robot::heal_to_max() { _health = ROBOT_MAX_HEALTH; }
+inline bool Robot::is_alive() { return _health > 0; }
 
 std::ostream &operator<<(std::ostream &stream, Robot &robot);
 

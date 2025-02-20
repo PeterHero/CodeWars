@@ -4,6 +4,7 @@
 
 BattleController::BattleController() : _robots_on_field({}), _battlefield({}) {
   _battlefield[0][1] = FieldObject(FieldObject::Type::WALL);
+  _battlefield[1][2] = FieldObject(FieldObject::Type::HEAL);
 
   create_robot(1, 0, 0, Direction::RIGHT);
   create_robot(2, 1, 1, Direction::RIGHT);
@@ -15,6 +16,8 @@ BattleController::BattleController() : _robots_on_field({}), _battlefield({}) {
   robot_move(1, Direction::RIGHT);
   robot_shoot(1);
   robot_turn_left(1);
+  robot_shoot(1);
+  robot_move(2, Direction::UP);
   robot_shoot(1);
   robot_shoot(1);
   print_battlefield();
@@ -38,6 +41,11 @@ void BattleController::robot_move(robot_id_t id, Direction direction) {
       robot.set_x(new_x);
       robot.set_y(new_y);
       PLOG_INFO << "Robot " << id << " moved " << to_string(direction);
+
+      if (_battlefield[new_x][new_y].on_step_action(robot)) {
+        PLOG_INFO << "Robot " << id << " "
+                  << _battlefield[new_x][new_y].get_action_message();
+      }
     }
   }
 }
@@ -50,10 +58,11 @@ void BattleController::robot_shoot(robot_id_t id) {
                        bullet_y)) {
     robot_id_t target_id = _robots_on_field[bullet_x][bullet_y];
     if (target_id != ROBOT_NULL_ID) {
-      if (_robots[target_id].get_shot()) {
-        PLOG_ERROR << "Robot " << id << " killed robot " << target_id;
-      } else {
+      _robots[target_id].get_shot();
+      if (_robots[target_id].is_alive()) {
         PLOG_WARNING << "Robot " << id << " shot robot " << target_id;
+      } else {
+        PLOG_ERROR << "Robot " << id << " killed robot " << target_id;
       }
       break;
     } else if (!_battlefield[bullet_x][bullet_y].is_bullet_passable()) {

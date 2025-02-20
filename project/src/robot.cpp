@@ -40,13 +40,6 @@ void Robot::turn_right() {
   }
 }
 
-bool Robot::get_shot() {
-  _health = (_health > SHOT_DAMAGE) ? _health - SHOT_DAMAGE : 0;
-  return _health == 0;
-}
-
-bool Robot::is_alive() { return _health > 0; }
-
 void Robot::print(std::ostream &stream) {
   switch (_look_dir) {
   case Direction::LEFT:
