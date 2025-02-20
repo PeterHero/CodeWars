@@ -1,4 +1,5 @@
-#include "battle_controller.hpp"
+// #include "battle_controller.hpp"
+#include "interpret.hpp"
 #include <plog/Appenders/ColorConsoleAppender.h>
 #include <plog/Formatters/TxtFormatter.h>
 #include <plog/Init.h>
@@ -8,6 +9,7 @@ int main(int argc, char **argv) {
   plog::init(plog::verbose, &consoleAppender);
   // todo improve logging to show only needed info
 
-  BattleController battle;
+  // BattleController battle;
+  Interpret interpret("examples/test.rbsh");
   return 0;
 }

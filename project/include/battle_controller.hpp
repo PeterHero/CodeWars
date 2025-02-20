@@ -19,10 +19,10 @@ private:
   void robot_shoot(robot_id_t id);
   void robot_turn_left(robot_id_t id);
   void robot_turn_right(robot_id_t id);
+  void print_battlefield();
 
 public:
   BattleController();
-  void print_battlefield();
 };
 
 #endif
