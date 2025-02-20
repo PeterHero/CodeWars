@@ -66,6 +66,8 @@ private:
                     Direction direction);
   void robot_move(robot_id_t id, Direction direction);
   void robot_shoot(robot_id_t id);
+  void robot_turn_left(robot_id_t id);
+  void robot_turn_right(robot_id_t id);
 
 public:
   BattleController();

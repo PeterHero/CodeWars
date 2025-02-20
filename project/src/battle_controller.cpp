@@ -162,9 +162,9 @@ BattleController::BattleController() : _robots_on_field({}), _battlefield({}) {
   robot_shoot(1);
   robot_move(1, Direction::RIGHT);
   robot_shoot(1);
+  robot_turn_left(1);
   robot_shoot(1);
-  _robots[1].turn_left();
-  _robots[3].turn_left();
+  robot_shoot(1);
   print_battlefield();
 }
 
@@ -175,7 +175,7 @@ void BattleController::create_robot(robot_id_t id, size_t pos_x, size_t pos_y,
 }
 
 void BattleController::robot_move(robot_id_t id, Direction direction) {
-  Robot robot = _robots[id];
+  Robot &robot = _robots[id];
   size_t new_x;
   size_t new_y;
   if (calc_position(robot._pos_x, robot._pos_y, direction, new_x, new_y)) {
@@ -191,25 +191,33 @@ void BattleController::robot_move(robot_id_t id, Direction direction) {
 }
 
 void BattleController::robot_shoot(robot_id_t id) {
-  // todo debug this
-  // and learn to debug in vs code
-  Robot robot = _robots[id];
+  Robot &robot = _robots[id];
   size_t bullet_x = robot._pos_x;
   size_t bullet_y = robot._pos_y;
   while (
       calc_position(bullet_x, bullet_y, robot._look_dir, bullet_x, bullet_y)) {
-    std::cout << "x: " << bullet_x << " y: " << bullet_y << std::endl;
     robot_id_t target_id = _robots_on_field[bullet_x][bullet_y];
     if (target_id != ROBOT_NULL_ID) {
-      if (_robots[target_id].get_shot())
+      if (_robots[target_id].get_shot()) {
         PLOG_ERROR << "Robot " << id << " killed robot " << target_id;
-      else
+      } else {
         PLOG_WARNING << "Robot " << id << " shot robot " << target_id;
+      }
       break;
     } else if (!_battlefield[bullet_x][bullet_y].is_bullet_passable()) {
       break;
     }
   }
+}
+
+void BattleController::robot_turn_left(robot_id_t id) {
+  _robots[id].turn_left();
+  PLOG_INFO << "Robot " << id << " turned left";
+}
+
+void BattleController::robot_turn_right(robot_id_t id) {
+  _robots[id].turn_right();
+  PLOG_INFO << "Robot " << id << " turned right";
 }
 
 void BattleController::print_battlefield() {
