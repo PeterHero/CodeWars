@@ -14,10 +14,16 @@ set(SRC_DIR "src")
 
 set(TARGET_H
     "${INCLUDE_DIR}/battle_controller.hpp"
+    "${INCLUDE_DIR}/direction.hpp"
+    "${INCLUDE_DIR}/field_object.hpp"
+    "${INCLUDE_DIR}/robot.hpp"
     )
 set(TARGET_SRC
     "${SRC_DIR}/hello_main.cpp"
     "${SRC_DIR}/battle_controller.cpp"
+    "${SRC_DIR}/direction.cpp"
+    "${SRC_DIR}/field_object.cpp"
+    "${SRC_DIR}/robot.cpp"
     )
 
 add_executable(${MY_EXE} ${TARGET_H} ${TARGET_SRC})

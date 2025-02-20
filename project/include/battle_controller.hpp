@@ -1,60 +1,11 @@
 #ifndef battle_controller_hpp_
 #define battle_controller_hpp_
 
+#include "direction.hpp"
+#include "field_object.hpp"
+#include "robot.hpp"
 #include <array>
-#include <iostream>
 #include <map>
-
-#define FIELD_SIZE 5
-#define ROBOT_MAX_HEALTH 100
-#define ROBOT_NULL_ID 0
-#define SHOT_DAMAGE 50
-
-using robot_id_t = size_t;
-
-enum class Direction { LEFT, UP, RIGHT, DOWN };
-
-std::string to_string(Direction &direction);
-
-bool calc_position(size_t old_x, size_t old_y, Direction direction,
-                   size_t &new_x, size_t &new_y);
-
-class Robot {
-private:
-public:
-  // todo should be public? rename?
-  robot_id_t _id;
-  size_t _health;
-  size_t _pos_x;
-  size_t _pos_y;
-  Direction _look_dir;
-
-  Robot();
-  Robot(robot_id_t id, size_t pos_x, size_t pos_y, Direction direction);
-  void turn_left();
-  void turn_right();
-  bool get_shot();
-  void print(std::ostream &stream = std::cout);
-};
-
-std::ostream &operator<<(std::ostream &stream, Robot &robot);
-
-class FieldObject {
-public:
-  enum class Type { GROUND, WALL };
-
-private:
-  Type _type;
-
-public:
-  FieldObject();
-  FieldObject(Type type);
-  bool is_walkable();
-  bool is_bullet_passable();
-  void print(std::ostream &stream = std::cout);
-};
-
-std::ostream &operator<<(std::ostream &stream, FieldObject &field_object);
 
 class BattleController {
 private:
