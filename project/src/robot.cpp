@@ -1,10 +1,11 @@
 #include "robot.hpp"
 
-Robot::Robot() {}
+Robot::Robot() : control_script("") {}
 
-Robot::Robot(robot_id_t id, size_t pos_x, size_t pos_y, Direction direction)
+Robot::Robot(robot_id_t id, size_t pos_x, size_t pos_y, Direction direction,
+             std::string script_file)
     : _id(id), _health(ROBOT_MAX_HEALTH), _pos_x(pos_x), _pos_y(pos_y),
-      _look_dir(direction) {}
+      _look_dir(direction), control_script(Interpret(script_file)) {}
 
 void Robot::turn_left() {
   switch (_look_dir) {
@@ -40,7 +41,7 @@ void Robot::turn_right() {
   }
 }
 
-void Robot::print(std::ostream &stream) {
+void Robot::print(std::ostream &stream) const {
   switch (_look_dir) {
   case Direction::LEFT:
     stream << "<";

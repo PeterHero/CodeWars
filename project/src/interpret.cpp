@@ -1,6 +1,6 @@
 #include "interpret.hpp"
+#include "plog/Log.h"
 #include <fstream>
-#include <iostream>
 #include <sstream>
 
 Command::Command(Type cmd_type) : type(cmd_type) {}
@@ -36,6 +36,7 @@ Interpret::Interpret(const std::string &filename) : _current_line(0) {
   std::string line;
   while (std::getline(file, line)) {
     if (line != "") {
+      _script_unsplitted.push_back(line);
       _script.push_back({});
       std::istringstream line_stream(line);
       std::string word;
@@ -45,13 +46,6 @@ Interpret::Interpret(const std::string &filename) : _current_line(0) {
     }
   }
   file.close();
-
-  for (std::vector<std::string> &l : _script) {
-    for (std::string &w : l) {
-      std::cout << w << " ";
-    }
-    std::cout << std::endl;
-  }
 }
 
 bool Interpret::line_is_command() {
@@ -60,7 +54,9 @@ bool Interpret::line_is_command() {
 }
 Command Interpret::get_command() {
   std::vector<std::string> &line = _script[_current_line];
-  // todo constants
+
+  PLOG_VERBOSE << _script_unsplitted[_current_line];
+
   std::string &cmd_string = line[2];
 
   if (cmd_string == CMD_SHOOT) {

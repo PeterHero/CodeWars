@@ -1,2 +1,3 @@
 robot cmd move right
-robot cmd move left
+robot cmd shoot
+robot cmd turn left

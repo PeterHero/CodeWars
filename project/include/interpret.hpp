@@ -26,6 +26,7 @@ public:
 class Interpret {
 private:
   std::vector<std::vector<std::string>> _script;
+  std::vector<std::string> _script_unsplitted;
   size_t _current_line;
 
   bool line_is_command();
