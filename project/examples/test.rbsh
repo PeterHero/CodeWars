@@ -1,2 +1,2 @@
-robot move right
-robot move left
+robot cmd move right
+robot cmd move left

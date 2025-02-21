@@ -4,6 +4,10 @@
 #include <string>
 
 #define FIELD_SIZE 5
+#define DIRECTION_LEFT "left"
+#define DIRECTION_UP "up"
+#define DIRECTION_RIGHT "right"
+#define DIRECTION_DOWN "down"
 
 enum class Direction { LEFT, UP, RIGHT, DOWN };
 
