@@ -9,11 +9,13 @@
 #define DIRECTION_RIGHT "right"
 #define DIRECTION_DOWN "down"
 
-enum class Direction { LEFT, UP, RIGHT, DOWN };
+enum class Direction { LEFT,
+    UP,
+    RIGHT,
+    DOWN };
 
-std::string to_string(Direction &direction);
+std::string to_string(Direction& direction);
 
-bool calc_position(size_t old_x, size_t old_y, Direction direction,
-                   size_t &new_x, size_t &new_y);
+bool calc_position(size_t old_x, size_t old_y, Direction direction, size_t& new_x, size_t& new_y);
 
 #endif

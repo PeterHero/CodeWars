@@ -13,33 +13,38 @@
 
 class Command {
 public:
-  enum class Type { MOVE, TURN_LEFT, TURN_RIGHT, SHOOT, INVALID };
-  Type type;
-  Direction move_direction;
+    enum class Type { MOVE,
+        TURN_LEFT,
+        TURN_RIGHT,
+        SHOOT,
+        INVALID };
+    Type type;
+    Direction move_direction;
 
-  Command(Type cmd_type);
-  Command(Type cmd_type, Direction direction);
-  static Command create_move(const std::string &parameter);
-  static Command create_turn(const std::string &parameter);
+    Command(Type cmd_type);
+    Command(Type cmd_type, Direction direction);
+    static Command create_move(const std::string& parameter);
+    static Command create_turn(const std::string& parameter);
 };
 
 class Interpret {
 private:
-  std::vector<std::vector<std::string>> _script;
-  std::vector<std::string> _script_unsplitted;
-  size_t _current_line;
+    std::vector<std::vector<std::string>> _script;
+    std::vector<std::string> _script_unsplitted;
+    size_t _current_line;
 
-  bool line_is_command();
-  Command get_command();
-  void next_line();
+    bool line_is_command();
+    Command get_command();
+    void next_line();
 
 public:
-  Interpret(const std::string &filename);
-  Command next_command();
+    Interpret(const std::string& filename);
+    Command next_command();
 };
 
-inline void Interpret::next_line() {
-  _current_line = (_current_line + 1) % _script.size();
+inline void Interpret::next_line()
+{
+    _current_line = (_current_line + 1) % _script.size();
 }
 
 #endif
