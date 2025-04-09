@@ -1,0 +1,9 @@
+if robot see enemy
+    robot cmd shoot
+else
+    if robot can move forward
+        robot cmd move forward
+    else
+        robot cmd turn right
+    endif
+endif

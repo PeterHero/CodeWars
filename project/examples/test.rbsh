@@ -1,5 +1,0 @@
-if robot sees_enemy
-    robot cmd shoot
-else
-    robot cmd move right
-endif

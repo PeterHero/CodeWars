@@ -1,0 +1,10 @@
+if robot can place bomb
+    robot cmd turn left
+    robot cmd place bomb
+    robot cmd move forward
+    robot cmd move forward
+    robot cmd move forward
+else
+    robot cmd move forward
+    robot cmd move right
+endif
