@@ -1,4 +1,4 @@
-#include "field_object.hpp"
+#include "declarations.hpp"
 
 FieldObject::FieldObject()
     : _type(Type::GROUND)

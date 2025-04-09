@@ -1,0 +1,19 @@
+if true
+    robot cmd move right
+    robot cmd shoot
+    robot cmd turn left
+else
+    DEADBEEF
+endif
+
+if robot sees_enemy
+    if true
+        DEADBEEF
+    endif
+else
+    if true
+        robot cmd move right
+        robot cmd shoot
+        robot cmd turn left
+    endif
+endif

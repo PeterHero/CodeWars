@@ -1,5 +1,4 @@
-#include "battle_controller.hpp"
-#include "robot.hpp"
+#include "declarations.hpp"
 #include <iostream>
 #include <plog/Log.h>
 
@@ -10,17 +9,17 @@ BattleController::BattleController()
     _battlefield[0][1] = FieldObject(FieldObject::Type::WALL);
     _battlefield[1][2] = FieldObject(FieldObject::Type::HEAL);
 
-    create_robot(1, 0, 0, Direction::RIGHT, "examples/test.rbsh");
-    create_robot(2, 1, 1, Direction::RIGHT, "examples/test.rbsh");
-    create_robot(3, 3, 3, Direction::LEFT, "examples/test.rbsh");
-    create_robot(4, 4, 4, Direction::LEFT, "examples/test.rbsh");
+    create_robot(1, 0, 0, Direction::UP, "examples/test.rbsh");
+    create_robot(2, 1, 1, Direction::UP, "examples/test.rbsh");
+    create_robot(3, 3, 3, Direction::UP, "examples/test.rbsh");
+    create_robot(4, 4, 4, Direction::UP, "examples/test.rbsh");
 
     print_battlefield();
 }
 
 void BattleController::create_robot(robot_id_t id, size_t pos_x, size_t pos_y, Direction direction, std::string script_file)
 {
-    _robots[id] = Robot(id, pos_x, pos_y, direction, script_file);
+    _robots[id] = Robot(id, pos_x, pos_y, direction, script_file, &_battlefield, &_robots_on_field, &_robots);
     _robots_on_field[pos_x][pos_y] = id;
 }
 
@@ -129,9 +128,11 @@ void BattleController::execute_command(robot_id_t id, const Command& cmd)
 void BattleController::simulate_battle()
 {
     for (size_t turn = 0; turn < TURNS_MAX; ++turn) {
+        /*
         if (_robots.size() == 1) {
             break;
         }
+        */
 
         for (auto& [id, robot] : _robots) {
             if (robot.is_alive()) {

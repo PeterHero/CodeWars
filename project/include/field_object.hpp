@@ -1,8 +1,9 @@
 #ifndef field_object_hpp_
 #define field_object_hpp_
 
-#include "robot.hpp"
 #include <iostream>
+
+class Robot;
 
 class FieldObject {
 public:

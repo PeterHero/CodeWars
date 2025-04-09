@@ -1,3 +1,5 @@
-robot cmd move right
-robot cmd shoot
-robot cmd turn left
+if robot sees_enemy
+    robot cmd shoot
+else
+    robot cmd move right
+endif

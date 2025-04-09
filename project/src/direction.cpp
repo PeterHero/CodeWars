@@ -1,4 +1,4 @@
-#include "direction.hpp"
+#include "declarations.hpp"
 
 std::string to_string(Direction& direction)
 {

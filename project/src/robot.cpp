@@ -1,17 +1,20 @@
-#include "robot.hpp"
+#include "declarations.hpp"
 
 Robot::Robot()
-    : control_script("")
+    : control_script("", 0, nullptr, nullptr, nullptr)
 {
 }
 
-Robot::Robot(robot_id_t id, size_t pos_x, size_t pos_y, Direction direction, std::string script_file)
+Robot::Robot(robot_id_t id, size_t pos_x, size_t pos_y, Direction direction, std::string script_file,
+    std::array<std::array<FieldObject, FIELD_SIZE>, FIELD_SIZE>* battlefield,
+    std::array<std::array<robot_id_t, FIELD_SIZE>, FIELD_SIZE>* robots_on_field,
+    std::map<robot_id_t, Robot>* robots)
     : _id(id)
     , _health(ROBOT_MAX_HEALTH)
     , _pos_x(pos_x)
     , _pos_y(pos_y)
     , _look_dir(direction)
-    , control_script(Interpret(script_file))
+    , control_script(Interpret(script_file, id, battlefield, robots_on_field, robots))
 {
 }
 

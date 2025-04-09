@@ -2,6 +2,7 @@
 #define robot_hpp_
 
 #include "direction.hpp"
+#include "field_object.hpp"
 #include "interpret.hpp"
 #include <iostream>
 
@@ -23,8 +24,13 @@ public:
     Interpret control_script;
 
     Robot();
-    Robot(robot_id_t id, size_t pos_x, size_t pos_y, Direction direction, std::string script_file);
-    robot_id_t get_id() const;
+    Robot(robot_id_t id, size_t pos_x, size_t pos_y, Direction direction, std::string script_file,
+        std::array<std::array<FieldObject, FIELD_SIZE>, FIELD_SIZE>* battlefield,
+        std::array<std::array<robot_id_t, FIELD_SIZE>, FIELD_SIZE>* robots_on_field,
+        std::map<robot_id_t, Robot>* robots);
+
+    robot_id_t
+    get_id() const;
     size_t get_x() const;
     size_t get_y() const;
     void set_x(size_t new_x);
