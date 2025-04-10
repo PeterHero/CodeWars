@@ -14,6 +14,5 @@ public:
 
     virtual ~FieldObject() { };
 };
-;
 
 #endif
