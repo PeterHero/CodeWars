@@ -1,29 +1,19 @@
 #ifndef field_object_hpp_
 #define field_object_hpp_
 
-#include <iostream>
-
-class Robot;
+#include "robot_events.hpp"
+#include <string>
 
 class FieldObject {
 public:
-    enum class Type { GROUND,
-        WALL,
-        HEAL };
+    virtual std::string get_type() = 0;
+    virtual bool is_walkable() = 0;
+    virtual bool is_bullet_passable() = 0;
+    virtual void on_step_action(RobotEvents& robot) = 0;
+    virtual FieldObject on_shoot_action() = 0;
 
-private:
-    Type _type;
-
-public:
-    FieldObject();
-    FieldObject(Type type);
-    bool is_walkable();
-    bool is_bullet_passable();
-    bool on_step_action(Robot& robot);
-    std::string get_action_message();
-    void print(std::ostream& stream = std::cout);
+    virtual ~FieldObject() { };
 };
-
-std::ostream& operator<<(std::ostream& stream, FieldObject& field_object);
+;
 
 #endif
