@@ -2,9 +2,7 @@
 #define robot_actions_hpp_
 
 #include "direction.hpp"
-
-enum class Rotation { LEFT,
-    RIGHT };
+#include "rotation.hpp"
 
 class RobotActions {
 public:
