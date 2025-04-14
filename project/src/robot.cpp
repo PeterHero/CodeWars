@@ -35,8 +35,39 @@ void Robot::act()
 
 /* RobotActions interface*/
 
-void Robot::shoot();
-void Robot::move(Direction direction);
+void Robot::shoot()
+{
+    size_t bullet_x = _pos_x;
+    size_t bullet_y = _pos_y;
+    while (calc_position(bullet_x, bullet_y, _look_dir, bullet_x, bullet_y)) {
+        Robot& r = _robotfield_ptr->at(bullet_x)[bullet_y];
+        if (r) {
+            r.take_damage(SHOT_DAMAGE);
+            break;
+        }
+
+        auto&& object = _battlefield_ptr->at(bullet_x)[bullet_y];
+        if (!object->is_bullet_passable()) {
+            _battlefield_ptr->at(bullet_x)[bullet_y] = std::move(object->on_shoot_action(std::move(object)));
+            break;
+        }
+    }
+}
+
+void Robot::move(Direction direction)
+{
+    size_t new_x;
+    size_t new_y;
+    if (calc_position(_pos_x, _pos_y, _look_dir, new_x, new_y)) {
+        if (!_robotfield_ptr->at(new_x)[new_y] && _battlefield_ptr->at(new_x)[new_y]->is_walkable()) {
+            std::swap(_robotfield_ptr->at(_pos_x)[_pos_y], _robotfield_ptr->at(new_x)[new_y]);
+            _pos_x = new_x;
+            _pos_y = new_y;
+
+            _battlefield_ptr->at(new_x)[new_y]->on_step_action(*this);
+        }
+    }
+}
 
 void Robot::turn(Rotation rotation)
 {
@@ -73,7 +104,10 @@ void Robot::turn(Rotation rotation)
     }
 }
 
-void Robot::place_bomb();
+void Robot::place_bomb()
+{
+    // todo implement
+}
 
 /* RobotEvents interface */
 

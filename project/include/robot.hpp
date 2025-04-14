@@ -10,11 +10,12 @@
 #include <memory>
 
 #define ROBOT_MAX_HEALTH 100
+#define SHOT_DAMAGE 50
 
 class Robot;
 
 using robot_id_t = size_t;
-using battlefield_t = std::array<std::array<FieldObject*, FIELD_SIZE>, FIELD_SIZE>;
+using battlefield_t = std::array<std::array<std::unique_ptr<FieldObject>, FIELD_SIZE>, FIELD_SIZE>;
 using robotfield_t = std::array<std::array<Robot, FIELD_SIZE>, FIELD_SIZE>;
 
 class Robot : public Character, public RobotActions, public RobotEvents, public RobotInfo {

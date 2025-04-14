@@ -10,7 +10,7 @@ public:
     bool is_bullet_passable() override { return true; }
     bool is_empty() override { return true; }
     void on_step_action(RobotEvents& robot) override { }
-    FieldObject on_shoot_action() override { return *this; }
+    std::unique_ptr<FieldObject> on_shoot_action(std::unique_ptr<FieldObject> previous) override { return std::move(previous); }
 };
 
 class Wall : public FieldObject {
@@ -20,7 +20,7 @@ public:
     bool is_bullet_passable() override { return false; }
     bool is_empty() override { return false; }
     void on_step_action(RobotEvents& robot) override { }
-    FieldObject on_shoot_action() override { return *this; }
+    std::unique_ptr<FieldObject> on_shoot_action(std::unique_ptr<FieldObject> previous) override { return std::move(previous); }
 };
 
 class Box : public FieldObject {
@@ -30,7 +30,7 @@ public:
     bool is_bullet_passable() override { return false; }
     bool is_empty() override { return false; }
     void on_step_action(RobotEvents& robot) override { }
-    FieldObject on_shoot_action() override { return Ground(); }
+    std::unique_ptr<FieldObject> on_shoot_action(std::unique_ptr<FieldObject> previous) override { return std::make_unique<Ground>(); }
 };
 
 class Heal : public FieldObject {
@@ -40,7 +40,7 @@ public:
     bool is_bullet_passable() override { return true; }
     bool is_empty() override { return false; }
     void on_step_action(RobotEvents& robot) override { robot.heal(); }
-    FieldObject on_shoot_action() override { return *this; }
+    std::unique_ptr<FieldObject> on_shoot_action(std::unique_ptr<FieldObject> previous) override { return std::move(previous); }
 };
 
 class Point : public FieldObject {
@@ -50,7 +50,7 @@ public:
     bool is_bullet_passable() override { return true; }
     bool is_empty() override { return false; }
     void on_step_action(RobotEvents& robot) override { robot.collect_point(); }
-    FieldObject on_shoot_action() override { return *this; }
+    std::unique_ptr<FieldObject> on_shoot_action(std::unique_ptr<FieldObject> previous) override { return std::move(previous); }
 };
 
 class Bomb : public FieldObject {
@@ -62,7 +62,7 @@ public:
     bool is_bullet_passable() override { return false; }
     bool is_empty() override { return false; }
     void on_step_action(RobotEvents& robot) override { }
-    FieldObject on_shoot_action() override { return Ground(); }
+    std::unique_ptr<FieldObject> on_shoot_action(std::unique_ptr<FieldObject> previous) override { return std::make_unique<Ground>(); }
 };
 
 #endif
