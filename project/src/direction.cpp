@@ -1,5 +1,19 @@
 #include "direction.hpp"
 
+Direction opposite_direction(Direction direction)
+{
+    switch (direction) {
+    case Direction::DOWN:
+        return Direction::UP;
+    case Direction::UP:
+        return Direction::DOWN;
+    case Direction::LEFT:
+        return Direction::RIGHT;
+    case Direction::RIGHT:
+        return Direction::LEFT;
+    }
+}
+
 bool is_direction(std::string str)
 {
     return str == DIRECTION_RIGHT || str == DIRECTION_DOWN || str == DIRECTION_LEFT || str == DIRECTION_UP;

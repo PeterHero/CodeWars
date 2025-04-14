@@ -7,7 +7,7 @@
 class RobotInfo {
 public:
     virtual bool sees_enemy() = 0;
-    virtual bool sees(FieldObject object) = 0;
+    virtual bool sees(FieldObject* object) = 0;
     virtual bool can_move(Direction direction) = 0;
     virtual bool can_place_bomb() = 0;
     virtual bool is_low_health() = 0;

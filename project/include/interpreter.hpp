@@ -3,6 +3,7 @@
 
 #include "command.hpp"
 #include "robot_info.hpp"
+#include <memory>
 #include <vector>
 
 #define CMD_MOVE "move"

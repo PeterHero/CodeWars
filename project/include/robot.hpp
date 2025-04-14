@@ -2,30 +2,67 @@
 #define robot_hpp_
 
 #include "character.hpp"
+#include "interpreter.hpp"
 #include "robot_actions.hpp"
 #include "robot_events.hpp"
 #include "robot_info.hpp"
+#include <array>
+#include <memory>
+
+#define ROBOT_MAX_HEALTH 100
+
+class Robot;
+
+using robot_id_t = size_t;
+using battlefield_t = std::array<std::array<FieldObject*, FIELD_SIZE>, FIELD_SIZE>;
+using robotfield_t = std::array<std::array<Robot, FIELD_SIZE>, FIELD_SIZE>;
 
 class Robot : public Character, public RobotActions, public RobotEvents, public RobotInfo {
+private:
+    std::unique_ptr<Interpreter> _control_script;
+    battlefield_t* _battlefield_ptr;
+    robotfield_t* _robotfield_ptr;
+    robot_id_t _id;
+    size_t _health;
+    size_t _pos_x;
+    size_t _pos_y;
+    Direction _look_dir;
+    bool _is_alive;
+    size_t _points;
+
 public:
-    void bla();
+    Robot();
+    Robot(robot_id_t id,
+        size_t pos_x,
+        size_t pos_y,
+        Direction direction,
+        std::unique_ptr<Interpreter> control_script,
+        battlefield_t* battlefield_ptr,
+        robotfield_t* robotfield_ptr);
+
+    explicit operator bool() const { return _is_alive; }
+
     /* Character interface */
+
     void act() override;
 
     /* RobotActions interface*/
+
     void shoot() override;
     void move(Direction direction) override;
     void turn(Rotation rotation) override;
     void place_bomb() override;
 
     /* RobotEvents interface */
+
     void heal() override;
     void take_damage(size_t damage) override;
     void collect_point() override;
 
     /* RobotInfo interface */
+
     bool sees_enemy() override;
-    bool sees(FieldObject object) override;
+    bool sees(FieldObject* object) override;
     bool can_move(Direction direction) override;
     bool can_place_bomb() override;
     bool is_low_health() override;
