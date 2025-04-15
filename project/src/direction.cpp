@@ -1,4 +1,5 @@
 #include "direction.hpp"
+#include <plog/Log.h>
 
 Direction opposite_direction(Direction direction)
 {
@@ -11,24 +12,65 @@ Direction opposite_direction(Direction direction)
         return Direction::RIGHT;
     case Direction::RIGHT:
         return Direction::LEFT;
+    default:
+        PLOG_ERROR << "Unhandled direction!";
+        std::abort();
+    }
+}
+
+Direction left_direction(Direction direction)
+{
+    switch (direction) {
+    case Direction::LEFT:
+        return Direction::DOWN;
+    case Direction::DOWN:
+        return Direction::RIGHT;
+    case Direction::RIGHT:
+        return Direction::UP;
+    case Direction::UP:
+        return Direction::LEFT;
+    default:
+        PLOG_ERROR << "Unhandled direction";
+        std::abort();
+    }
+}
+
+Direction right_direction(Direction direction)
+{
+    switch (direction) {
+    case Direction::LEFT:
+        return Direction::UP;
+    case Direction::UP:
+        return Direction::RIGHT;
+    case Direction::RIGHT:
+        return Direction::DOWN;
+    case Direction::DOWN:
+        return Direction::LEFT;
+    default:
+        PLOG_ERROR << "Unhandled direction";
+        std::abort();
     }
 }
 
 bool is_direction(std::string str)
 {
-    return str == DIRECTION_RIGHT || str == DIRECTION_DOWN || str == DIRECTION_LEFT || str == DIRECTION_UP;
+    return str == DIRECTION_RIGHT || str == DIRECTION_FORWARD || str == DIRECTION_LEFT || str == DIRECTION_BACK;
 }
 
-Direction string_to_direction(std::string str)
+Direction string_to_direction(std::string str, Direction look_dir)
 {
-    if (str == DIRECTION_RIGHT)
-        return Direction::RIGHT;
-    else if (str == DIRECTION_DOWN)
-        return Direction::DOWN;
+    if (str == DIRECTION_FORWARD)
+        return look_dir;
+    else if (str == DIRECTION_BACK)
+        return opposite_direction(look_dir);
     else if (str == DIRECTION_LEFT)
-        return Direction::LEFT;
-    else
-        return Direction::UP;
+        return left_direction(look_dir);
+    else if (str == DIRECTION_RIGHT)
+        return right_direction(look_dir);
+    else {
+        PLOG_ERROR << "Invalid direction";
+        return look_dir;
+    }
 }
 
 bool calc_position(size_t old_x, size_t old_y, Direction direction, size_t& new_x, size_t& new_y)

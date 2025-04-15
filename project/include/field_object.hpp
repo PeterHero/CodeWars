@@ -13,6 +13,7 @@ public:
     virtual bool is_empty() = 0;
     virtual void on_step_action(RobotEvents& robot) = 0;
     virtual std::unique_ptr<FieldObject> on_shoot_action(std::unique_ptr<FieldObject> previous) = 0;
+    virtual void print() = 0;
 
     virtual ~FieldObject() { };
 };

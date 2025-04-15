@@ -2,6 +2,7 @@
 #define field_objects_hpp_
 
 #include "field_object.hpp"
+#include <iostream>
 
 class Ground : public FieldObject {
 public:
@@ -11,6 +12,7 @@ public:
     bool is_empty() override { return true; }
     void on_step_action(RobotEvents& robot) override { }
     std::unique_ptr<FieldObject> on_shoot_action(std::unique_ptr<FieldObject> previous) override { return std::move(previous); }
+    void print() override { std::cout << " "; }
 };
 
 class Wall : public FieldObject {
@@ -21,6 +23,7 @@ public:
     bool is_empty() override { return false; }
     void on_step_action(RobotEvents& robot) override { }
     std::unique_ptr<FieldObject> on_shoot_action(std::unique_ptr<FieldObject> previous) override { return std::move(previous); }
+    void print() override { std::cout << "W"; }
 };
 
 class Box : public FieldObject {
@@ -31,6 +34,7 @@ public:
     bool is_empty() override { return false; }
     void on_step_action(RobotEvents& robot) override { }
     std::unique_ptr<FieldObject> on_shoot_action(std::unique_ptr<FieldObject> previous) override { return std::make_unique<Ground>(); }
+    void print() override { std::cout << "O"; }
 };
 
 class Heal : public FieldObject {
@@ -41,6 +45,7 @@ public:
     bool is_empty() override { return false; }
     void on_step_action(RobotEvents& robot) override { robot.heal(); }
     std::unique_ptr<FieldObject> on_shoot_action(std::unique_ptr<FieldObject> previous) override { return std::move(previous); }
+    void print() override { std::cout << "H"; }
 };
 
 class Point : public FieldObject {
@@ -51,6 +56,7 @@ public:
     bool is_empty() override { return false; }
     void on_step_action(RobotEvents& robot) override { robot.collect_point(); }
     std::unique_ptr<FieldObject> on_shoot_action(std::unique_ptr<FieldObject> previous) override { return std::move(previous); }
+    void print() override { std::cout << "P"; }
 };
 
 class Bomb : public FieldObject {
@@ -63,6 +69,17 @@ public:
     bool is_empty() override { return false; }
     void on_step_action(RobotEvents& robot) override { }
     std::unique_ptr<FieldObject> on_shoot_action(std::unique_ptr<FieldObject> previous) override { return std::make_unique<Ground>(); }
+    void print() override { std::cout << "B"; }
 };
+
+inline bool is_object(std::string str)
+{
+    return str == Ground {}.get_type()
+        || str == Wall {}.get_type()
+        || str == Box {}.get_type()
+        || str == Heal {}.get_type()
+        || str == Point {}.get_type()
+        || str == Bomb {}.get_type();
+}
 
 #endif

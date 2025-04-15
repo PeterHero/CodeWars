@@ -13,7 +13,7 @@ set(INCLUDE_DIR "include")
 set(SRC_DIR "src")
 
 set(TARGET_H
-    #"${INCLUDE_DIR}/battle_controller.hpp"
+    "${INCLUDE_DIR}/battle_controller.hpp"
     "${INCLUDE_DIR}/character.hpp"
     "${INCLUDE_DIR}/command.hpp"
     "${INCLUDE_DIR}/commands.hpp"
@@ -28,11 +28,12 @@ set(TARGET_H
     "${INCLUDE_DIR}/rotation.hpp"
     )
 set(TARGET_SRC
+    "${SRC_DIR}/battle_controller.cpp"
     "${SRC_DIR}/direction.cpp"
     "${SRC_DIR}/interpreter.cpp"
+    "${SRC_DIR}/main.cpp"
     "${SRC_DIR}/robot.cpp"
-    #"${SRC_DIR}/hello_main.cpp"
-    #"${SRC_DIR}/battle_controller.cpp"
+    "${SRC_DIR}/rotation.cpp"
     )
 
 add_executable(${MY_EXE} ${TARGET_H} ${TARGET_SRC})

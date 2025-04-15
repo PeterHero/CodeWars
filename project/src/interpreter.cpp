@@ -1,13 +1,13 @@
 #include "interpreter.hpp"
 #include "commands.hpp"
+#include "field_objects.hpp"
 #include "plog/Log.h"
 #include <fstream>
 #include <regex>
 #include <sstream>
 
-Interpreter::Interpreter(std::string filename, RobotInfo* robot)
-    : _robot(robot)
-    , _current_line(0)
+Interpreter::Interpreter(std::string filename)
+    : _current_line(0)
     , _branch_depth(0)
     , _executing(true)
 {
@@ -17,12 +17,13 @@ Interpreter::Interpreter(std::string filename, RobotInfo* robot)
         line = std::regex_replace(line, std::regex("^ +| +$|( ) +"), "$1");
         if (line != "") {
             _script_unsplitted.push_back(line);
-            _script.push_back({});
+            std::vector<std::string> words;
             std::istringstream line_stream(line);
             std::string word;
-            while (std::getline(line_stream, word, ' ')) {
-                _script.back().push_back(word);
+            while (line_stream >> word) {
+                words.push_back(word);
             }
+            _script.push_back(words);
         }
     }
     file.close();
@@ -34,15 +35,26 @@ bool Interpreter::line_is_command()
     return line_size() >= 3 && get_word(0) == ROBOT_STRING && get_word(1) == CMD_STRING;
 }
 
-bool Interpreter::line_evaluate_expr()
+bool Interpreter::line_evaluate_expr(RobotInfo& robot)
 {
     if (get_word(1) == TRUE_STRING)
         return true;
     if (get_word(1) == FALSE_STRING)
         return false;
 
-    if (get_word(1) == ROBOT_STRING && get_word(2) == SEES_ENEMY) {
-        return _robot->sees_enemy();
+    if (get_word(1) == ROBOT_STRING) {
+        if (get_word(2) == SEE_STRING && get_word(3) == ENEMY_STRING)
+            return robot.sees_enemy();
+        if (get_word(2) == SEE_STRING && is_object(get_word(3)))
+            return robot.sees(get_word(3));
+        if (get_word(2) == HEALTH_STRING && get_word(3) == HIGH_STRING)
+            return !robot.is_low_health();
+        if (get_word(2) == HEALTH_STRING && get_word(3) == LOW_STRING)
+            return robot.is_low_health();
+        if (get_word(2) == CAN_STRING && get_word(3) == CMD_PLACE && get_word(4) == BOMB_STRING)
+            return robot.can_place_bomb();
+        if (get_word(2) == CAN_STRING && get_word(3) == CMD_MOVE && is_direction(get_word(4)))
+            return robot.can_move(string_to_direction(get_word(4), robot.look_direction()));
     }
 
     PLOG_ERROR << "invalid expression in if statement";
@@ -56,10 +68,15 @@ size_t Interpreter::line_size()
 
 std::string& Interpreter::get_word(size_t index)
 {
-    return _script[_current_line][index];
+    if (index <= line_size())
+        return _script[_current_line][index];
+    else {
+        PLOG_ERROR << "invalid index";
+        std::abort();
+    }
 }
 
-std::unique_ptr<Command> Interpreter::get_command()
+std::unique_ptr<Command> Interpreter::get_command(RobotInfo& robot)
 {
     PLOG_VERBOSE << _script_unsplitted[_current_line];
 
@@ -69,7 +86,7 @@ std::unique_ptr<Command> Interpreter::get_command()
         return std::make_unique<CommandShoot>();
     } else if (cmd_string == CMD_MOVE && line_size() == 4) {
         if (is_direction(get_word(3)))
-            return std::make_unique<CommandMove>(string_to_direction(get_word(3)));
+            return std::make_unique<CommandMove>(string_to_direction(get_word(3), robot.look_direction()));
         else
             PLOG_ERROR << get_word(3) << "is not a valid direction";
     } else if (cmd_string == CMD_TURN && line_size() == 4) {
@@ -77,10 +94,12 @@ std::unique_ptr<Command> Interpreter::get_command()
             return std::make_unique<CommandTurn>(string_to_rotation(get_word(3)));
         else
             PLOG_ERROR << get_word(3) << "in not a valid rotation";
+    } else if (cmd_string == CMD_PLACE && get_word(3) == BOMB_STRING) {
+        return std::make_unique<CommandPlaceBomb>();
     } else {
         PLOG_ERROR << "Invalid command!";
-        return std::make_unique<CommandMove>(Direction::UP);
     }
+    return std::make_unique<CommandMove>(Direction::UP);
 }
 
 void Interpreter::next_line()
@@ -88,16 +107,14 @@ void Interpreter::next_line()
     _current_line = (_current_line + 1) % _script.size();
 }
 
-std::unique_ptr<Command> Interpreter::next_command()
+std::unique_ptr<Command> Interpreter::next_command(RobotInfo& robot)
 {
     while (!(_executing && line_is_command())) {
         if (get_word(0) == IF_STRING) {
             _branch_depth++;
-            if (!line_evaluate_expr()) {
-                if (_executing) {
-                    current_depth = _branch_depth;
-                    _executing = false;
-                }
+            if (_executing && !line_evaluate_expr(robot)) {
+                current_depth = _branch_depth;
+                _executing = false;
             }
         }
 
@@ -119,7 +136,7 @@ std::unique_ptr<Command> Interpreter::next_command()
         next_line();
     }
 
-    auto command = get_command();
+    auto command = get_command(robot);
     next_line();
-    return command;
+    return std::move(command);
 }
