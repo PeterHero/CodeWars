@@ -3,18 +3,17 @@
 #include <iostream>
 #include <set>
 
-BattleController::BattleController(size_t number_of_teams, GAME_MODE game_mode)
-    : _number_of_teams(number_of_teams)
-    , _game_mode(game_mode)
+BattleController::BattleController(GAME_MODE game_mode)
+    : _game_mode(game_mode)
 {
 }
 
-void BattleController::create_robot(robot_id_t id, Direction direction, std::string script_file)
+void BattleController::create_robot(robot_id_t id, size_t team_id, Direction direction, std::string script_file)
 {
     size_t pos_x, pos_y;
     get_free_field(pos_x, pos_y);
     auto interpreter = std::make_unique<Interpreter>(script_file);
-    _robots_storage[id] = Robot(id, id, pos_x, pos_y, direction, std::move(interpreter), &_battlefield, &_robotfield, &_robots_storage);
+    _robots_storage[id] = Robot(id, team_id, pos_x, pos_y, direction, std::move(interpreter), &_battlefield, &_robotfield, &_robots_storage);
     _robotfield[pos_x][pos_y] = id;
     _robots.push_back(&_robots_storage[id]);
 }
@@ -58,20 +57,22 @@ void BattleController::print_battlefield()
     std::cout << std::endl;
 }
 
-void BattleController::setup_robots()
+void BattleController::setup_robots(std::vector<std::string>& scripts, size_t number_of_teams, size_t robots_in_team)
 {
-    // todo take script files and create teams
-
     _robotfield = robotfield_t();
     for (auto&& row : _robotfield)
         for (auto&& id : row)
             id = ROBOT_NULL_ID;
     _robots = std::vector<Character*>();
 
-    create_robot(1, Direction::UP, "examples/alpha.rbsh");
-    create_robot(2, Direction::UP, "examples/bomber.rbsh");
-    create_robot(3, Direction::UP, "examples/bomber.rbsh");
-    create_robot(4, Direction::UP, "examples/simple.rbsh");
+    size_t id = 1;
+    size_t script_index = 0;
+    for (size_t team_id = 0; team_id < number_of_teams; ++team_id) {
+        for (size_t i = 0; i < robots_in_team; ++i) {
+            create_robot(id++, team_id, Direction::UP, scripts[script_index]);
+            script_index = (script_index + 1) % scripts.size();
+        }
+    }
 }
 
 void BattleController::setup_battlefield()

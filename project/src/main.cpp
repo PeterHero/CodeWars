@@ -12,9 +12,16 @@ int main(int argc, char** argv)
     // and option for gamemode
     // then take list of script files
 
-    BattleController battle(3, GAME_MODE::DEATHMATCH);
+    std::vector<std::string> scripts = {
+        "examples/alpha.rbsh",
+        "examples/bomber.rbsh",
+        "examples/simple.rbsh"
+    };
+
+    BattleController battle(GAME_MODE::DEATHMATCH);
+
     battle.setup_battlefield();
-    battle.setup_robots();
+    battle.setup_robots(scripts, 4, 1);
     battle.simulate_battle();
     return 0;
 }
