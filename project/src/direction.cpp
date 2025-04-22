@@ -96,3 +96,19 @@ bool calc_position(size_t old_x, size_t old_y, Direction direction, size_t& new_
 
     return new_x < FIELD_SIZE && new_y < FIELD_SIZE;
 }
+
+std::string to_string(Direction direction)
+{
+    switch (direction) {
+    case Direction::UP:
+        return "up";
+    case Direction::LEFT:
+        return "left";
+    case Direction::RIGHT:
+        return "right";
+    case Direction::DOWN:
+        return "down";
+    default:
+        return "NO_DIRECTION";
+    }
+}
