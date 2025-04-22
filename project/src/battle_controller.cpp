@@ -137,5 +137,31 @@ void BattleController::simulate_battle()
         refresh_battlefield();
     }
 
-    // todo choose and display winner
+    std::cout << std::endl
+              << std::endl
+              << "END OF BATTLE!" << std::endl
+              << std::endl;
+
+    if (_game_mode == GAME_MODE::DEATHMATCH) {
+        std::cout << "Robots alive are:" << std::endl;
+        for (auto&& robot : _robots) {
+            std::cout << "R[" << robot->id() << "] (" << robot->script_file() << ")" << std::endl;
+        }
+    } else if (_game_mode == GAME_MODE::TEAM_DM) {
+        std::cout << "Robots alive are:" << std::endl;
+        for (auto&& robot : _robots) {
+            std::cout << "T[" << robot->team_id() << "]R[" << robot->id() << "] (" << robot->script_file() << ")" << std::endl;
+        }
+    } else if (_game_mode == GAME_MODE::POINTS) {
+        auto cmp = [](Character* a, Character* b) { return a->points() > b->points(); };
+        std::set<Character*, decltype(cmp)> scoreboard;
+
+        for (auto&& robot : _robots)
+            scoreboard.insert(robot);
+
+        size_t ranking = 1;
+        for (auto&& robot : scoreboard) {
+            std::cout << ranking++ << ". R[" << robot->id() << "] -> " << robot->points() << "p (" << robot->script_file() << ")" << std::endl;
+        }
+    }
 }

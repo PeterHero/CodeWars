@@ -58,6 +58,8 @@ public:
     bool is_alive() override;
     robot_id_t id() override;
     size_t team_id() override;
+    size_t points() override;
+    std::string script_file() override;
 
     /* RobotActions interface*/
 

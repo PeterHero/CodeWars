@@ -10,6 +10,7 @@ Interpreter::Interpreter(std::string filename)
     : _current_line(0)
     , _branch_depth(0)
     , _executing(true)
+    , _filename(filename)
 {
     std::ifstream file(filename);
     std::string line;

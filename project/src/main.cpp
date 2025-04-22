@@ -18,10 +18,10 @@ int main(int argc, char** argv)
         "examples/simple.rbsh"
     };
 
-    BattleController battle(GAME_MODE::DEATHMATCH);
+    BattleController battle(GAME_MODE::TEAM_DM);
 
     battle.setup_battlefield();
-    battle.setup_robots(scripts, 4, 1);
+    battle.setup_robots(scripts, 3, 3);
     battle.simulate_battle();
     return 0;
 }

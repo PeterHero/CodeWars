@@ -58,6 +58,16 @@ size_t Robot::team_id()
     return _team_id;
 }
 
+size_t Robot::points()
+{
+    return _points;
+}
+
+std::string Robot::script_file()
+{
+    return _control_script->_filename;
+}
+
 /* RobotActions interface*/
 
 void Robot::shoot()

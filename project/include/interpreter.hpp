@@ -45,6 +45,8 @@ private:
     void next_line();
 
 public:
+    const std::string _filename;
+
     Interpreter(std::string filename);
     std::unique_ptr<Command> next_command(RobotInfo& robot);
 };
