@@ -9,12 +9,21 @@ BattleController::BattleController(size_t number_of_teams, GAME_MODE game_mode)
 {
 }
 
-void BattleController::create_robot(robot_id_t id, size_t pos_x, size_t pos_y, Direction direction, std::string script_file)
+void BattleController::create_robot(robot_id_t id, Direction direction, std::string script_file)
 {
+    size_t pos_x, pos_y;
+    get_free_field(pos_x, pos_y);
     auto interpreter = std::make_unique<Interpreter>(script_file);
     _robots_storage[id] = Robot(id, id, pos_x, pos_y, direction, std::move(interpreter), &_battlefield, &_robotfield, &_robots_storage);
     _robotfield[pos_x][pos_y] = id;
     _robots.push_back(&_robots_storage[id]);
+}
+
+void BattleController::create_object(std::unique_ptr<FieldObject> object)
+{
+    size_t pos_x, pos_y;
+    get_free_field(pos_x, pos_y);
+    _battlefield[pos_x][pos_y] = std::move(object);
 }
 
 void BattleController::update_robots()
@@ -59,10 +68,10 @@ void BattleController::setup_robots()
             id = ROBOT_NULL_ID;
     _robots = std::vector<Character*>();
 
-    create_robot(1, 0, 0, Direction::UP, "examples/alpha.rbsh");
-    create_robot(2, 1, 1, Direction::UP, "examples/bomber.rbsh");
-    create_robot(3, 3, 3, Direction::UP, "examples/bomber.rbsh");
-    create_robot(4, 4, 4, Direction::UP, "examples/simple.rbsh");
+    create_robot(1, Direction::UP, "examples/alpha.rbsh");
+    create_robot(2, Direction::UP, "examples/bomber.rbsh");
+    create_robot(3, Direction::UP, "examples/bomber.rbsh");
+    create_robot(4, Direction::UP, "examples/simple.rbsh");
 }
 
 void BattleController::setup_battlefield()
@@ -74,8 +83,9 @@ void BattleController::setup_battlefield()
         }
     }
 
-    // todo create nice common battlefield
-    _battlefield[0][1] = std::make_unique<Point>();
+    create_objects<Point>(4);
+    create_objects<Box>(4);
+    create_objects<Wall>(2);
 }
 
 void BattleController::refresh_battlefield()
@@ -92,6 +102,18 @@ size_t BattleController::teams_alive()
         teams.insert(robot_ptr->team_id());
 
     return teams.size();
+}
+
+void BattleController::get_free_field(size_t& pos_x, size_t& pos_y)
+{
+    int random = rand() % (FIELD_SIZE * FIELD_SIZE);
+    pos_x = random / FIELD_SIZE;
+    pos_y = random % FIELD_SIZE;
+    while (_battlefield[pos_x][pos_y]->get_type() != Ground {}.get_type() && _robotfield[pos_x][pos_y] == ROBOT_NULL_ID) {
+        int random = rand() % (FIELD_SIZE * FIELD_SIZE);
+        pos_x = random / FIELD_SIZE;
+        pos_y = random % FIELD_SIZE;
+    }
 }
 
 void BattleController::simulate_battle()

@@ -3,7 +3,7 @@
 
 #include <string>
 
-#define FIELD_SIZE 5
+#define FIELD_SIZE 10
 #define DIRECTION_LEFT "left"
 #define DIRECTION_FORWARD "forward"
 #define DIRECTION_RIGHT "right"
