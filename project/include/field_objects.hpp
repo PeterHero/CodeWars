@@ -82,8 +82,6 @@ public:
 };
 
 class Bomb : public FieldObject {
-    // todo implement damaging
-    // pass battlefield pointers
     int turns = BOMB_TURNS;
     RobotEvents* _owner;
 

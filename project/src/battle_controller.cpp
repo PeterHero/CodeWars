@@ -6,6 +6,7 @@
 BattleController::BattleController(GAME_MODE game_mode)
     : _game_mode(game_mode)
 {
+    srand(time(NULL));
 }
 
 void BattleController::create_robot(robot_id_t id, size_t team_id, Direction direction, std::string script_file)

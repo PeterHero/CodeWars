@@ -4,6 +4,8 @@ The game is played on a field with script controlled robots.
 On how the robots are controlled see [language specification](language.md).
 There are few different objects and gamemodes.
 
+Run help `code_wars -h` to see options to select number of robots and game mode.
+
 ## Game modes
 
 ### Deathmatch
