@@ -1,7 +1,8 @@
 # Code Wars
 
 Code wars is a simulation of battle of robots driven by scripts.
-Have fun testing various strategies.
+You can write your own but there are some example scripts in the example directory.
+Have fun testing various strategies. 
 
 ## Specification and Documentation
 

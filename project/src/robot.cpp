@@ -1,13 +1,29 @@
 #include "robot.hpp"
 #include "field_objects.hpp"
-// #include "../include/robot.hpp"
 #include <plog/Log.h>
 
+/**
+ * @brief Construct a new Robot:: Robot object - default constructor
+ *
+ */
 Robot::Robot()
     : _is_alive(false)
 {
 }
 
+/**
+ * @brief Construct a new Robot:: Robot object - custom constructor
+ *
+ * @param id robot id
+ * @param team_id team id
+ * @param pos_x x coordinate
+ * @param pos_y y coordinate
+ * @param direction look direction
+ * @param control_script interpreter for script file
+ * @param battlefield_ptr pointer to array of field objects
+ * @param robotfield_ptr pointer to array of robot ids
+ * @param robots_ptr pointer to robot storage
+ */
 Robot::Robot(robot_id_t id,
     size_t team_id,
     size_t pos_x,
@@ -35,6 +51,10 @@ Robot::Robot(robot_id_t id,
 
 /* Character interface */
 
+/**
+ * @brief Execute next command
+ *
+ */
 void Robot::act()
 {
     PLOG_VERBOSE << "Robot " << _id << " turn:";
@@ -44,25 +64,52 @@ void Robot::act()
     }
 }
 
+/**
+ * @brief Checks if robot is alive
+ *
+ * @return true
+ * @return false
+ */
 bool Robot::is_alive()
 {
     return _is_alive;
 }
 
+/**
+ * @brief Get robot id
+ *
+ * @return robot_id_t
+ */
 robot_id_t Robot::id()
 {
     return _id;
 }
+
+/**
+ * @brief Get robot team id
+ *
+ * @return size_t
+ */
 size_t Robot::team_id()
 {
     return _team_id;
 }
 
+/**
+ * @brief Get robot points
+ *
+ * @return size_t
+ */
 size_t Robot::points()
 {
     return _points;
 }
 
+/**
+ * @brief Get robot script filename
+ *
+ * @return std::string
+ */
 std::string Robot::script_file()
 {
     return _control_script->_filename;
@@ -70,6 +117,10 @@ std::string Robot::script_file()
 
 /* RobotActions interface*/
 
+/**
+ * @brief Fire a bullet which finds a target until it stops or goes beyond battlefield
+ *
+ */
 void Robot::shoot()
 {
     PLOG_WARNING << "R[" << _id << "]: Shot a bullet";
@@ -91,6 +142,11 @@ void Robot::shoot()
     }
 }
 
+/**
+ * @brief Move robot in the direction if can move
+ *
+ * @param direction
+ */
 void Robot::move(Direction direction)
 {
     size_t new_x;
@@ -110,6 +166,11 @@ void Robot::move(Direction direction)
     }
 }
 
+/**
+ * @brief Turn robot according to rotation
+ *
+ * @param rotation
+ */
 void Robot::turn(Rotation rotation)
 {
 
@@ -122,6 +183,10 @@ void Robot::turn(Rotation rotation)
     }
 }
 
+/**
+ * @brief Place a bomb behind robot if the spot is empty
+ *
+ */
 void Robot::place_bomb()
 {
     Direction back = opposite_direction(_look_dir);
@@ -137,12 +202,21 @@ void Robot::place_bomb()
 
 /* RobotEvents interface */
 
+/**
+ * @brief Heal to full health
+ *
+ */
 void Robot::heal()
 {
     _health = ROBOT_MAX_HEALTH;
     PLOG_WARNING << "R[" << _id << "]: Healed";
 }
 
+/**
+ * @brief Take amount of damage
+ *
+ * @param damage damage to be taken
+ */
 void Robot::take_damage(size_t damage)
 {
     PLOG_WARNING << "R[" << _id << "]: Was damaged with " << damage;
@@ -155,12 +229,23 @@ void Robot::take_damage(size_t damage)
     }
 }
 
+/**
+ * @brief Collect a point
+ *
+ */
 void Robot::collect_point()
 {
     _points++;
     PLOG_WARNING << "R[" << _id << "]: Collected a point";
 }
 
+/**
+ * @brief Deal bomb damage in the position using direction
+ *
+ * @param pos_x x coordinate, return value for new position
+ * @param pos_y y coordinate, return value for new position
+ * @param direction direction in which to deal damage
+ */
 void Robot::deal_bomb_damage(size_t& pos_x, size_t& pos_y, Direction direction)
 {
     if (calc_position(pos_x, pos_y, direction, pos_x, pos_y) && _robotfield_ptr->at(pos_x)[pos_y] != ROBOT_NULL_ID) {
@@ -168,6 +253,10 @@ void Robot::deal_bomb_damage(size_t& pos_x, size_t& pos_y, Direction direction)
     }
 }
 
+/**
+ * @brief Deal damage in an area around bomb
+ *
+ */
 void Robot::explode_bomb()
 {
     PLOG_WARNING << "R[" << _id << "]: Bomb has exploded";
@@ -191,6 +280,12 @@ void Robot::explode_bomb()
 
 /* RobotInfo interface */
 
+/**
+ * @brief Checks if robot sees enemy
+ *
+ * @return true
+ * @return false
+ */
 bool Robot::sees_enemy()
 {
     size_t x = _pos_x;
@@ -203,6 +298,13 @@ bool Robot::sees_enemy()
     return false;
 }
 
+/**
+ * @brief Checks if robot sees an object
+ *
+ * @param object_string object type in string
+ * @return true
+ * @return false
+ */
 bool Robot::sees(std::string object_string)
 {
     size_t x = _pos_x;
@@ -214,6 +316,13 @@ bool Robot::sees(std::string object_string)
     return false;
 }
 
+/**
+ * @brief Checks if robot can move in direction
+ *
+ * @param direction
+ * @return true
+ * @return false
+ */
 bool Robot::can_move(Direction direction)
 {
     size_t x;
@@ -227,6 +336,12 @@ bool Robot::can_move(Direction direction)
     return _battlefield_ptr->at(x)[y]->is_walkable();
 }
 
+/**
+ * @brief Checks if robot can place bomb behind it
+ *
+ * @return true
+ * @return false
+ */
 bool Robot::can_place_bomb()
 {
     if (_bomb != nullptr)
@@ -247,16 +362,32 @@ bool Robot::can_place_bomb()
     return true;
 }
 
+/**
+ * @brief Checks if robot health is below treshold
+ *
+ * @return true
+ * @return false
+ */
 bool Robot::is_low_health()
 {
     return _health < ROBOT_MAX_HEALTH / 2;
 }
 
+/**
+ * @brief Get robot look direction
+ *
+ * @return Direction
+ */
 Direction Robot::look_direction()
 {
     return _look_dir;
 }
 
+/**
+ * @brief Print robot to stream
+ *
+ * @param stream
+ */
 void Robot::print(std::ostream& stream) const
 {
     switch (_look_dir) {
@@ -275,6 +406,13 @@ void Robot::print(std::ostream& stream) const
     }
 }
 
+/**
+ * @brief Print robot to stream
+ *
+ * @param stream
+ * @param robot
+ * @return std::ostream&
+ */
 std::ostream& operator<<(std::ostream& stream, Robot& robot)
 {
     robot.print(stream);

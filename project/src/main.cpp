@@ -5,6 +5,10 @@
 #include <plog/Init.h>
 #include <string>
 
+/**
+ * @brief Prints program help
+ *
+ */
 void print_help()
 {
     std::cout << std::endl

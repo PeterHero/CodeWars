@@ -3,12 +3,25 @@
 #include <iostream>
 #include <set>
 
+/**
+ * @brief Construct a new Battle Controller:: Battle Controller object
+ *
+ * @param game_mode
+ */
 BattleController::BattleController(GAME_MODE game_mode)
     : _game_mode(game_mode)
 {
     srand(time(NULL));
 }
 
+/**
+ * @brief Create a robot from parameters and put it on battlefield
+ *
+ * @param id robot id
+ * @param team_id team id
+ * @param direction look direction
+ * @param script_file script filename
+ */
 void BattleController::create_robot(robot_id_t id, size_t team_id, Direction direction, std::string script_file)
 {
     size_t pos_x, pos_y;
@@ -19,6 +32,11 @@ void BattleController::create_robot(robot_id_t id, size_t team_id, Direction dir
     _robots.push_back(&_robots_storage[id]);
 }
 
+/**
+ * @brief Create an object and put it on battlefield
+ *
+ * @param object
+ */
 void BattleController::create_object(std::unique_ptr<FieldObject> object)
 {
     size_t pos_x, pos_y;
@@ -26,6 +44,10 @@ void BattleController::create_object(std::unique_ptr<FieldObject> object)
     _battlefield[pos_x][pos_y] = std::move(object);
 }
 
+/**
+ * @brief Remove dead robots from data structure
+ *
+ */
 void BattleController::update_robots()
 {
     _robots = std::vector<Character*>();
@@ -35,6 +57,10 @@ void BattleController::update_robots()
                 _robots.push_back(&_robots_storage[robot_id]);
 }
 
+/**
+ * @brief Print battlefield
+ *
+ */
 void BattleController::print_battlefield()
 {
     for (size_t i = 0; i < FIELD_SIZE + 2; ++i)
@@ -58,6 +84,13 @@ void BattleController::print_battlefield()
     std::cout << std::endl;
 }
 
+/**
+ * @brief Creates robots using scripts
+ *
+ * @param scripts list of script files to use
+ * @param number_of_teams number of teams
+ * @param robots_in_team number of robots in a team
+ */
 void BattleController::setup_robots(std::vector<std::string>& scripts, size_t number_of_teams, size_t robots_in_team)
 {
     _robotfield = robotfield_t();
@@ -76,6 +109,10 @@ void BattleController::setup_robots(std::vector<std::string>& scripts, size_t nu
     }
 }
 
+/**
+ * @brief Create objects on battlefield
+ *
+ */
 void BattleController::setup_battlefield()
 {
     _battlefield = battlefield_t();
@@ -90,6 +127,10 @@ void BattleController::setup_battlefield()
     create_objects<Wall>(2);
 }
 
+/**
+ * @brief Refresh all objects on battlefield
+ *
+ */
 void BattleController::refresh_battlefield()
 {
     for (auto&& row : _battlefield)
@@ -97,6 +138,11 @@ void BattleController::refresh_battlefield()
             object->turn_refresh();
 }
 
+/**
+ * @brief Get number of teams remaining
+ *
+ * @return size_t
+ */
 size_t BattleController::teams_alive()
 {
     std::set<size_t> teams;
@@ -106,6 +152,12 @@ size_t BattleController::teams_alive()
     return teams.size();
 }
 
+/**
+ * @brief Return a random empty position on a battlefield
+ *
+ * @param pos_x x return coordinate
+ * @param pos_y y return coordinate
+ */
 void BattleController::get_free_field(size_t& pos_x, size_t& pos_y)
 {
     int random = rand() % (FIELD_SIZE * FIELD_SIZE);
@@ -118,6 +170,10 @@ void BattleController::get_free_field(size_t& pos_x, size_t& pos_y)
     }
 }
 
+/**
+ * @brief Run game loop and print winners
+ *
+ */
 void BattleController::simulate_battle()
 {
     print_battlefield();

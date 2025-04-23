@@ -1,6 +1,12 @@
 #include "direction.hpp"
 #include <plog/Log.h>
 
+/**
+ * @brief Transform direction to opposite one
+ *
+ * @param direction
+ * @return Direction
+ */
 Direction opposite_direction(Direction direction)
 {
     switch (direction) {
@@ -18,6 +24,12 @@ Direction opposite_direction(Direction direction)
     }
 }
 
+/**
+ * @brief Transform direction as if turned left
+ *
+ * @param direction
+ * @return Direction
+ */
 Direction left_direction(Direction direction)
 {
     switch (direction) {
@@ -35,6 +47,12 @@ Direction left_direction(Direction direction)
     }
 }
 
+/**
+ * @brief Transform direction as if turned right
+ *
+ * @param direction
+ * @return Direction
+ */
 Direction right_direction(Direction direction)
 {
     switch (direction) {
@@ -52,11 +70,25 @@ Direction right_direction(Direction direction)
     }
 }
 
+/**
+ * @brief Checks if string is a valid Direction
+ *
+ * @param str
+ * @return true
+ * @return false
+ */
 bool is_direction(std::string str)
 {
     return str == DIRECTION_RIGHT || str == DIRECTION_FORWARD || str == DIRECTION_LEFT || str == DIRECTION_BACK;
 }
 
+/**
+ * @brief Combines direction and string command
+ *
+ * @param str Command how to change direction
+ * @param look_dir Current direction
+ * @return Direction New direction
+ */
 Direction string_to_direction(std::string str, Direction look_dir)
 {
     if (str == DIRECTION_FORWARD)
@@ -73,6 +105,17 @@ Direction string_to_direction(std::string str, Direction look_dir)
     }
 }
 
+/**
+ * @brief Calculates new coordinates using direction
+ *
+ * @param old_x Old x coordinate
+ * @param old_y Old y coordinate
+ * @param direction Direction where to move
+ * @param new_x Return value of new x coordinate
+ * @param new_y Return value of new y coordinate
+ * @return true if new position is in array boundaries
+ * @return false if new position is outside of array boundaries
+ */
 bool calc_position(size_t old_x, size_t old_y, Direction direction, size_t& new_x, size_t& new_y)
 {
     switch (direction) {
@@ -97,6 +140,12 @@ bool calc_position(size_t old_x, size_t old_y, Direction direction, size_t& new_
     return new_x < FIELD_SIZE && new_y < FIELD_SIZE;
 }
 
+/**
+ * @brief Get coresponding string from Direction
+ *
+ * @param direction
+ * @return std::string
+ */
 std::string to_string(Direction direction)
 {
     switch (direction) {
