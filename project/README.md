@@ -14,7 +14,7 @@ See the docs directory for various files regarding documentation.
 
 [Script language](docs/language.md)
 
-[Design overview](docs/project-design.md)
+[Programming documentation](docs/programmer-docs.md.md)
 
 ## Requirements to run
 

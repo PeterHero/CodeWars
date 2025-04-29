@@ -1,0 +1,312 @@
+@startuml
+
+
+
+
+
+/' Objects '/
+
+class BattleController {
+	+BattleController(GAME_MODE game_mode, std::optional<int> seed)
+	-_game_mode : GAME_MODE
+	-_battlefield : battlefield_t
+	-_robotfield : robotfield_t
+	-teams_alive() : size_t
+	-_robots_storage : std::map<robot_id_t, Robot>
+	-_robots : std::vector<Character*>
+	-create_object(std::unique_ptr<FieldObject> object) : void
+	-create_objects(size_t count) : void
+	-create_robot(robot_id_t id, size_t team_id, Direction direction, std::string script_file) : void
+	-get_free_field(size_t& pos_x, size_t& pos_y) : void
+	-print_battlefield() : void
+	-refresh_battlefield() : void
+	+setup_battlefield() : void
+	+setup_robots(std::vector<std::string>& scripts, size_t number_of_teams, size_t robots_in_team) : void
+	+simulate_battle() : void
+	-update_robots() : void
+}
+
+/'
+class Bomb {
+	+Bomb(RobotEvents* owner, size_t x, size_t y)
+	-_owner : RobotEvents*
+	+is_bullet_passable() : bool
+	+is_empty() : bool
+	+is_walkable() : bool
+	-turns : int
+	+pos_x : size_t
+	+pos_y : size_t
+	+get_type() : std::string
+	+on_shoot_action(std::unique_ptr<FieldObject> previous) : std::unique_ptr<FieldObject>
+	-explode() : void
+	+on_step_action(RobotEvents& robot) : void
+	+print() : void
+	+tick() : void
+	+turn_refresh() : void
+}
+'/
+
+abstract class Character {
+	+~Character()
+	+{abstract} is_alive() : bool
+	+{abstract} id() : robot_id_t
+	+{abstract} points() : size_t
+	+{abstract} team_id() : size_t
+	+{abstract} script_file() : std::string
+	+{abstract} act() : void
+}
+
+
+abstract class Command {
+	+~Command()
+	+{abstract} execute(RobotActions& robot) : void
+}
+
+
+class CommandMove {
+	+CommandMove(Direction direction)
+	-_direction : Direction
+	+execute(RobotActions& robot) : void
+}
+
+
+class CommandPlaceBomb {
+	+execute(RobotActions& robot) : void
+}
+
+
+class CommandShoot {
+	+execute(RobotActions& robot) : void
+}
+
+
+class CommandTurn {
+	+CommandTurn(Rotation rotation)
+	-_rotation : Rotation
+	+execute(RobotActions& robot) : void
+}
+
+
+abstract class FieldObject {
+	+~FieldObject()
+	+{abstract} is_bullet_passable() : bool
+	+{abstract} is_empty() : bool
+	+{abstract} is_walkable() : bool
+	+{abstract} get_type() : std::string
+	+{abstract} on_shoot_action(std::unique_ptr<FieldObject> previous) : std::unique_ptr<FieldObject>
+	+{abstract} on_step_action(RobotEvents& robot) : void
+	+{abstract} print() : void
+	+{abstract} turn_refresh() : void
+}
+
+
+class Ground {
+	+is_bullet_passable() : bool
+	+is_empty() : bool
+	+is_walkable() : bool
+	+get_type() : std::string
+	+on_shoot_action(std::unique_ptr<FieldObject> previous) : std::unique_ptr<FieldObject>
+	+on_step_action(RobotEvents& robot) : void
+	+print() : void
+	+turn_refresh() : void
+}
+
+
+class Interpreter {
+	+Interpreter(std::string filename)
+	-_executing : bool
+	-line_evaluate_expr(RobotInfo& robot) : bool
+	-line_is_command() : bool
+	+_filename : const std::string
+	-_branch_depth : size_t
+	-_current_line : size_t
+	-current_depth : size_t
+	-line_size() : size_t
+	-get_word(size_t index) : std::string&
+	-get_command(RobotInfo& robot) : std::unique_ptr<Command>
+	+next_command(RobotInfo& robot) : std::unique_ptr<Command>
+	-_script_unsplitted : std::vector<std::string>
+	-_script : std::vector<std::vector<std::string>>
+	-next_line() : void
+}
+
+
+class Robot {
+	+Robot()
+	+Robot(size_t id, size_t team_id, size_t pos_x, size_t pos_y, Direction direction, std::unique_ptr<Interpreter> control_script, array<std::array<std::unique_ptr<FieldObject>, FIELD_SIZE>, FIELD_SIZE> battlefield_ptr, array<std::array<robot_id_t, FIELD_SIZE>, FIELD_SIZE> robotfield_ptr, std::map<robot_id_t, Robot>* robots)
+	+operatorbool() {query}
+	-_bomb : Bomb*
+	-_look_dir : Direction
+	+look_direction() : Direction
+	-_robotfield_ptr : array<std::array<robot_id_t, FIELD_SIZE>, FIELD_SIZE>
+	-_battlefield_ptr : array<std::array<std::unique_ptr<FieldObject>, FIELD_SIZE>, FIELD_SIZE>
+	-_is_alive : bool
+	+can_move(Direction direction) : bool
+	+can_place_bomb() : bool
+	+is_alive() : bool
+	+is_low_health() : bool
+	+sees(std::string object_string) : bool
+	+sees_enemy() : bool
+	+id() : robot_id_t
+	-_health : size_t
+	-_id : size_t
+	-_points : size_t
+	-_pos_x : size_t
+	-_pos_y : size_t
+	-_team_id : size_t
+	+points() : size_t
+	+team_id() : size_t
+	-_robots_ptr : std::map<robot_id_t, Robot>*
+	+script_file() : std::string
+	-_control_script : std::unique_ptr<Interpreter>
+	+act() : void
+	+collect_point() : void
+	-deal_bomb_damage(size_t& pos_x, size_t& pos_y, Direction direction) : void
+	+explode_bomb() : void
+	+heal() : void
+	+move(Direction direction) : void
+	+place_bomb() : void
+	+print(std::ostream& stream) : void {query}
+	+shoot() : void
+	+take_damage(size_t damage) : void
+	+turn(Rotation rotation) : void
+}
+
+
+abstract class RobotActions {
+	+~RobotActions()
+	+{abstract} move(Direction direction) : void
+	+{abstract} place_bomb() : void
+	+{abstract} shoot() : void
+	+{abstract} turn(Rotation rotation) : void
+}
+
+
+abstract class RobotEvents {
+	+~RobotEvents()
+	+{abstract} collect_point() : void
+	+{abstract} explode_bomb() : void
+	+{abstract} heal() : void
+	+{abstract} take_damage(size_t damage) : void
+}
+
+
+abstract class RobotInfo {
+	+~RobotInfo()
+	+{abstract} look_direction() : Direction
+	+{abstract} can_move(Direction direction) : bool
+	+{abstract} can_place_bomb() : bool
+	+{abstract} is_low_health() : bool
+	+{abstract} sees(std::string object_string) : bool
+	+{abstract} sees_enemy() : bool
+}
+
+
+enum Direction {
+	DOWN
+	LEFT
+	RIGHT
+	UP
+}
+
+
+enum GAME_MODE {
+	DEATHMATCH
+	POINTS
+	TEAM_DM
+}
+
+
+enum Rotation {
+	LEFT
+	RIGHT
+}
+
+
+
+
+
+/' Inheritance relationships '/
+
+Character <|-- Robot
+
+
+Command <|-- CommandMove
+
+
+Command <|-- CommandPlaceBomb
+
+
+Command <|-- CommandShoot
+
+
+Command <|-- CommandTurn
+
+
+FieldObject <|-- Bomb
+
+
+FieldObject <|-- Ground
+
+
+RobotActions <|-- Robot
+
+
+RobotEvents <|-- Robot
+
+
+RobotInfo <|-- Robot
+
+
+
+
+
+/' Aggregation relationships '/
+
+BattleController o-- Character
+
+
+BattleController *-- GAME_MODE
+
+
+BattleController *-- Robot
+
+
+CommandMove *-- Direction
+
+
+CommandTurn *-- Rotation
+
+
+Robot o-- Bomb
+
+
+Robot *-- Direction
+
+
+Robot o-- FieldObject
+
+
+Robot o-- Interpreter
+
+
+Robot *-- Robot
+
+
+/' Association '/
+
+Command o.. RobotActions
+
+FieldObject o.. RobotEvents
+
+Interpreter o.. RobotInfo
+
+Command o.. Interpreter
+
+
+
+/' Nested objects '/
+
+
+
+@enduml
