@@ -91,15 +91,22 @@ This means a deathmatch of 4 robots controlled by simple.rbsh and the game seed 
 
 Let's look how the game goes:
 
+### Start of the game
+
 ![Screenshot 1](docs/example-run/cdwars1.png)
 
 At the start the battlefield is printed. We can see some walls (W), boxes (O), points (P) and robots facing up (A).
 
 Then comes the first turn:
+
+### After first turn
+
 ![Screenshot 2](docs/example-run/cdwars2.png)
 
 The log shows which commands from scripts were used by which robot (blue color) and what happened (yellow color).
 We can see most of the robots simply moving but the one who sees an enemy (robot 4) shoots.
+
+### After second turn
 
 ![Screenshot 3](docs/example-run/cdwars3.png)
 
@@ -107,6 +114,8 @@ In the second turn some robots turned right (continuing the else branch in scrip
 
 The game continues in turns until the turn count is up or there is only one robot left.
 The end of the game looks like this:
+
+### Game over
 
 ![Screenshot 4](docs/example-run/cdwars4.png)
 
