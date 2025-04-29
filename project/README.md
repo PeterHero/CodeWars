@@ -70,7 +70,9 @@ Options:
 
 ## Example run
 
-Let's look at how the game looks. for the example [this script](examples/simple.rbsh) was used.
+Let's look at how the game looks. The program is non-interactive simulation, it prints all turns until the end of the game.
+
+For the example [this script](examples/simple.rbsh) was used.
 The script looks like this:
 
 ```
