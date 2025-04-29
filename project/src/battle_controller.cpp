@@ -8,10 +8,14 @@
  *
  * @param game_mode
  */
-BattleController::BattleController(GAME_MODE game_mode)
+BattleController::BattleController(GAME_MODE game_mode, std::optional<int> seed)
     : _game_mode(game_mode)
 {
-    srand(time(NULL));
+    if (seed.has_value()) {
+        srand(seed.value());
+    } else {
+        srand(time(NULL));
+    }
 }
 
 /**

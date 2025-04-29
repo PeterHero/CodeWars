@@ -34,7 +34,7 @@ private:
     void get_free_field(size_t& pos_x, size_t& pos_y);
 
 public:
-    BattleController(GAME_MODE game_mode);
+    BattleController(GAME_MODE game_mode, std::optional<int> seed);
     void setup_robots(std::vector<std::string>& scripts, size_t number_of_teams, size_t robots_in_team);
     void setup_battlefield();
     void simulate_battle();

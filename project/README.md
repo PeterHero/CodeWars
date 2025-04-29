@@ -16,6 +16,16 @@ See the docs directory for various files regarding documentation.
 
 [Design overview](docs/project-design.md)
 
+## Requirements to run
+
+### Hardware requirements
+
+Supported architectures are that supported by the gcc compiler - x86/x86-64, ARM/AArch64, RISC-V,...
+
+### Software requirements
+
+Runs on Windows and Linux. Should also run on OS X but was not tested.
+
 ## How to compile
 
 Ensure CMake is installed.
@@ -37,3 +47,25 @@ cd build
 cmake ..
 cmake --build .
 ```
+
+## How to run
+
+You can use script to run by calling `./run.sh [args]` or directly `./build/code_wars [args]`.
+
+### Usage
+
+You need to provide at least one script file that will be used to control robots.
+Then some game parameters can be specified using predefined options:
+
+```
+Usage: code_wars [OPTION]... [SCRIPT FILES]...
+Code wars simulates fight of robots run by scripts
+
+Options:
+-t [number]     set number of teams/robots (default is 10)
+-m [mode]       set gamemode to one of [deathmatch/teams/capture] (default is deathmatch)
+-s [number]     set game seed (default is random)
+-h              print help
+```
+
+## Example run
