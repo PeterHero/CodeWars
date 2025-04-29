@@ -69,3 +69,45 @@ Options:
 ```
 
 ## Example run
+
+Let's look at how the game looks. for the example [this script](examples/simple.rbsh) was used.
+The script looks like this:
+
+```
+if robot see enemy
+    if robot health high
+        robot cmd shoot
+    else
+        robot cmd move left
+    endif
+else
+    robot cmd move forward
+    robot cmd turn right
+endif
+```
+
+The game was started using command `./run.sh -s 940 -t 4 examples/simple.rbsh`.
+This means a deathmatch of 4 robots controlled by simple.rbsh and the game seed is 940.
+
+Let's look how the game goes:
+
+![Screenshot 1](docs/example-run/cdwars1.png)
+
+At the start the battlefield is printed. We can see some walls (W), boxes (O), points (P) and robots facing up (A).
+
+Then comes the first turn:
+![Screenshot 2](docs/example-run/cdwars2.png)
+
+The log shows which commands from scripts were used by which robot (blue color) and what happened (yellow color).
+We can see most of the robots simply moving but the one who sees an enemy (robot 4) shoots.
+
+![Screenshot 3](docs/example-run/cdwars3.png)
+
+In the second turn some robots turned right (continuing the else branch in script) but we also get a first kill of the game.
+
+The game continues in turns until the turn count is up or there is only one robot left.
+The end of the game looks like this:
+
+![Screenshot 4](docs/example-run/cdwars4.png)
+
+The limit of turns was reached and 2 robots survived.
