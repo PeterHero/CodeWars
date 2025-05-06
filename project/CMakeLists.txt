@@ -19,6 +19,7 @@ set(TARGET_H
     "${INCLUDE_DIR}/commands.hpp"
     "${INCLUDE_DIR}/command_factory.hpp"
     "${INCLUDE_DIR}/direction.hpp"
+    "${INCLUDE_DIR}/expressions.hpp"
     "${INCLUDE_DIR}/field_object.hpp"
     "${INCLUDE_DIR}/field_objects.hpp"
     "${INCLUDE_DIR}/interpreter.hpp"

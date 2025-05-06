@@ -1,6 +1,7 @@
 #include "interpreter.hpp"
 #include "command_factory.hpp"
 #include "commands.hpp"
+#include "expressions.hpp"
 #include "field_objects.hpp"
 #include "plog/Log.h"
 #include <fstream>
@@ -57,28 +58,10 @@ bool Interpreter::line_is_command()
  */
 bool Interpreter::line_evaluate_expr(RobotInfo& robot)
 {
-    if (get_word(1) == TRUE_STRING)
-        return true;
-    if (get_word(1) == FALSE_STRING)
-        return false;
-
-    if (get_word(1) == ROBOT_STRING) {
-        if (get_word(2) == SEE_STRING && get_word(3) == ENEMY_STRING)
-            return robot.sees_enemy();
-        if (get_word(2) == SEE_STRING && is_object(get_word(3)))
-            return robot.sees(get_word(3));
-        if (get_word(2) == HEALTH_STRING && get_word(3) == HIGH_STRING)
-            return !robot.is_low_health();
-        if (get_word(2) == HEALTH_STRING && get_word(3) == LOW_STRING)
-            return robot.is_low_health();
-        if (get_word(2) == CAN_STRING && get_word(3) == CMD_PLACE && get_word(4) == BOMB_STRING)
-            return robot.can_place_bomb();
-        if (get_word(2) == CAN_STRING && get_word(3) == CMD_MOVE && is_direction(get_word(4)))
-            return robot.can_move(string_to_direction(get_word(4), robot.look_direction()));
-    }
-
-    PLOG_ERROR << "invalid expression in if statement";
-    return false;
+    std::unique_ptr<Expression> expr = std::make_unique<GeneralExpression>();
+    auto begin = ++_script[_current_line].begin();
+    auto end = _script[_current_line].end();
+    return expr->evaluate(begin, end, robot);
 }
 
 /**
