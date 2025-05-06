@@ -1,4 +1,5 @@
 #include "interpreter.hpp"
+#include "command_factory.hpp"
 #include "commands.hpp"
 #include "field_objects.hpp"
 #include "plog/Log.h"
@@ -115,27 +116,7 @@ std::string& Interpreter::get_word(size_t index)
 std::unique_ptr<Command> Interpreter::get_command(RobotInfo& robot)
 {
     PLOG_VERBOSE << _script_unsplitted[_current_line];
-
-    std::string& cmd_string = get_word(2);
-
-    if (cmd_string == CMD_SHOOT) {
-        return std::make_unique<CommandShoot>();
-    } else if (cmd_string == CMD_MOVE && line_size() == 4) {
-        if (is_direction(get_word(3)))
-            return std::make_unique<CommandMove>(string_to_direction(get_word(3), robot.look_direction()));
-        else
-            PLOG_ERROR << get_word(3) << "is not a valid direction";
-    } else if (cmd_string == CMD_TURN && line_size() == 4) {
-        if (is_rotation(get_word(3)))
-            return std::make_unique<CommandTurn>(string_to_rotation(get_word(3)));
-        else
-            PLOG_ERROR << get_word(3) << "in not a valid rotation";
-    } else if (cmd_string == CMD_PLACE && get_word(3) == BOMB_STRING) {
-        return std::make_unique<CommandPlaceBomb>();
-    } else {
-        PLOG_ERROR << "Invalid command!";
-    }
-    return std::make_unique<CommandMove>(Direction::UP);
+    return CommandFactory::create(_script[_current_line], robot);
 }
 
 /**
