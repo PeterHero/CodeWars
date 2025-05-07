@@ -1,7 +1,7 @@
 #ifndef battle_controller_hpp_
 #define battle_controller_hpp_
 
-#include "robot.hpp"
+#include "robot_logic.hpp"
 
 #define TURNS_MAX 100
 
@@ -15,7 +15,7 @@ private:
     robotfield_t _robotfield;
     std::map<robot_id_t, Robot> _robots_storage;
 
-    std::vector<Character*> _robots;
+    std::vector<std::unique_ptr<Character>> _robots;
 
     GAME_MODE _game_mode;
 

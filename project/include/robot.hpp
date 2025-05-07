@@ -22,7 +22,7 @@ using robot_id_t = size_t;
 using battlefield_t = std::array<std::array<std::unique_ptr<FieldObject>, FIELD_SIZE>, FIELD_SIZE>;
 using robotfield_t = std::array<std::array<robot_id_t, FIELD_SIZE>, FIELD_SIZE>;
 
-class Robot : public Character, public RobotActions, public RobotEvents, public RobotInfo {
+class Robot {
 private:
     std::unique_ptr<Interpreter> _control_script;
     battlefield_t* _battlefield_ptr;
@@ -42,47 +42,45 @@ private:
 
 public:
     Robot();
-    Robot(robot_id_t id,
-        size_t team_id,
-        size_t pos_x,
-        size_t pos_y,
-        Direction direction,
-        std::unique_ptr<Interpreter> control_script,
-        battlefield_t* battlefield_ptr,
-        robotfield_t* robotfield_ptr,
-        std::map<robot_id_t, Robot>* robots);
 
-    /* Character interface */
+    Interpreter* get_control_script() const { return _control_script.get(); };
+    void set_control_script(std::unique_ptr<Interpreter> control_script) { _control_script = std::move(control_script); }
 
-    void act() override;
-    bool is_alive() override;
-    robot_id_t id() override;
-    size_t team_id() override;
-    size_t points() override;
-    std::string script_file() override;
+    battlefield_t* get_battlefield_ptr() const { return _battlefield_ptr; }
+    void set_battlefield_ptr(battlefield_t* battlefield_ptr) { _battlefield_ptr = battlefield_ptr; }
 
-    /* RobotActions interface*/
+    robotfield_t* get_robotfield_ptr() const { return _robotfield_ptr; }
+    void set_robotfield_ptr(robotfield_t* robotfield_ptr) { _robotfield_ptr = robotfield_ptr; }
 
-    void shoot() override;
-    void move(Direction direction) override;
-    void turn(Rotation rotation) override;
-    void place_bomb() override;
+    std::map<robot_id_t, Robot>* get_robots_ptr() const { return _robots_ptr; }
+    void set_robots_ptr(std::map<robot_id_t, Robot>* robots_ptr) { _robots_ptr = robots_ptr; }
 
-    /* RobotEvents interface */
+    robot_id_t get_id() const { return _id; }
+    void set_id(robot_id_t id) { _id = id; }
 
-    void heal() override;
-    void take_damage(size_t damage) override;
-    void collect_point() override;
-    void explode_bomb() override;
+    size_t get_team_id() const { return _team_id; }
+    void set_team_id(size_t team_id) { _team_id = team_id; }
 
-    /* RobotInfo interface */
+    size_t get_health() const { return _health; }
+    void set_health(size_t health) { _health = health; }
 
-    bool sees_enemy() override;
-    bool sees(std::string object_string) override;
-    bool can_move(Direction direction) override;
-    bool can_place_bomb() override;
-    bool is_low_health() override;
-    Direction look_direction() override;
+    size_t get_pos_x() const { return _pos_x; }
+    void set_pos_x(size_t pos_x) { _pos_x = pos_x; }
+
+    size_t get_pos_y() const { return _pos_y; }
+    void set_pos_y(size_t pos_y) { _pos_y = pos_y; }
+
+    Direction get_look_dir() const { return _look_dir; }
+    void set_look_dir(Direction look_dir) { _look_dir = look_dir; }
+
+    bool get_is_alive() const { return _is_alive; }
+    void set_is_alive(bool is_alive) { _is_alive = is_alive; }
+
+    size_t get_points() const { return _points; }
+    void set_points(size_t points) { _points = points; }
+
+    Bomb* get_bomb() const { return _bomb; }
+    void set_bomb(Bomb* bomb) { _bomb = bomb; }
 
     /* Other */
     explicit operator bool() const { return _is_alive; }

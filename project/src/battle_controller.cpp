@@ -31,9 +31,26 @@ void BattleController::create_robot(robot_id_t id, size_t team_id, Direction dir
     size_t pos_x, pos_y;
     get_free_field(pos_x, pos_y);
     auto interpreter = std::make_unique<Interpreter>(script_file);
-    _robots_storage[id] = Robot(id, team_id, pos_x, pos_y, direction, std::move(interpreter), &_battlefield, &_robotfield, &_robots_storage);
+    // _robots_storage[id] = Robot(id, team_id, pos_x, pos_y, direction, std::move(interpreter), &_battlefield, &_robotfield, &_robots_storage);
+    _robots_storage[id] = Robot();
+    Robot& r = _robots_storage[id];
+    r.set_id(id);
+    r.set_team_id(team_id);
+    r.set_health(ROBOT_MAX_HEALTH);
+    r.set_pos_x(pos_x);
+    r.set_pos_y(pos_y);
+    r.set_look_dir(direction);
+    r.set_control_script(std::move(interpreter));
+    r.set_battlefield_ptr(&_battlefield);
+    r.set_robotfield_ptr(&_robotfield);
+    r.set_robots_ptr(&_robots_storage);
+    r.set_is_alive(true);
+    r.set_points(0);
+    r.set_bomb(nullptr);
+
     _robotfield[pos_x][pos_y] = id;
-    _robots.push_back(&_robots_storage[id]);
+    _robots.push_back(std::make_unique<RobotLogic>(&_robots_storage[id]));
+    // _robots.push_back(&_robots_storage[id]);
 }
 
 /**
@@ -54,11 +71,11 @@ void BattleController::create_object(std::unique_ptr<FieldObject> object)
  */
 void BattleController::update_robots()
 {
-    _robots = std::vector<Character*>();
+    _robots = std::vector<std::unique_ptr<Character>>();
     for (auto&& row : _robotfield)
         for (auto&& robot_id : row)
-            if (_robots_storage[robot_id].is_alive())
-                _robots.push_back(&_robots_storage[robot_id]);
+            if (RobotLogic(&_robots_storage[robot_id]).is_alive())
+                _robots.push_back(std::make_unique<RobotLogic>(&_robots_storage[robot_id]));
 }
 
 /**
@@ -101,7 +118,7 @@ void BattleController::setup_robots(std::vector<std::string>& scripts, size_t nu
     for (auto&& row : _robotfield)
         for (auto&& id : row)
             id = ROBOT_NULL_ID;
-    _robots = std::vector<Character*>();
+    _robots = std::vector<std::unique_ptr<Character>>();
 
     size_t id = 1;
     size_t script_index = 0;
@@ -218,7 +235,7 @@ void BattleController::simulate_battle()
         std::set<Character*, decltype(cmp)> scoreboard;
 
         for (auto&& robot : _robots)
-            scoreboard.insert(robot);
+            scoreboard.insert(robot.get());
 
         size_t ranking = 1;
         for (auto&& robot : scoreboard) {

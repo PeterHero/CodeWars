@@ -26,6 +26,7 @@ set(TARGET_H
     "${INCLUDE_DIR}/robot_actions.hpp"
     "${INCLUDE_DIR}/robot_events.hpp"
     "${INCLUDE_DIR}/robot_info.hpp"
+    "${INCLUDE_DIR}/robot_logic.hpp"
     "${INCLUDE_DIR}/robot.hpp"
     "${INCLUDE_DIR}/rotation.hpp"
     )
@@ -36,6 +37,7 @@ set(TARGET_SRC
     "${SRC_DIR}/interpreter.cpp"
     "${SRC_DIR}/main.cpp"
     "${SRC_DIR}/robot.cpp"
+    "${SRC_DIR}/robot_logic.cpp"
     "${SRC_DIR}/rotation.cpp"
     )
 
