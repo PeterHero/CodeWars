@@ -29,11 +29,15 @@ Then there is the main game function `simulate_battle()`. There each turn robots
 
 ### Robot
 
-Robot is a class that implements interfaces: Character, RobotActions, RobotEvents and RobotInfo.
+Robot is a class holding all data related to robot.
+
+### Robot Logic
+
+RobotLogic is a class that implements interfaces: Character, RobotActions, RobotEvents and RobotInfo.
 This is a central class responsible for most of the game logic. It is accesible from other classes using
 several interfaces so that only needed functions of robot can be accessed.
 
-In `act()` Robot calls interpreter class that parses robot's script file and creates next command.
+In `act()` RobotLogic calls interpreter class that parses robot's script file and creates next command.
 
 ### Character
 

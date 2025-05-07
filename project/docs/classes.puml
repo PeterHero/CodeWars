@@ -13,7 +13,7 @@ class BattleController {
 	-_robotfield : robotfield_t
 	-teams_alive() : size_t
 	-_robots_storage : std::map<robot_id_t, Robot>
-	-_robots : std::vector<Character*>
+	-_robots : std::vector<std::unique_ptr<Character>>
 	-create_object(std::unique_ptr<FieldObject> object) : void
 	-create_objects(size_t count) : void
 	-create_robot(robot_id_t id, size_t team_id, Direction direction, std::string script_file) : void
@@ -26,25 +26,6 @@ class BattleController {
 	-update_robots() : void
 }
 
-/'
-class Bomb {
-	+Bomb(RobotEvents* owner, size_t x, size_t y)
-	-_owner : RobotEvents*
-	+is_bullet_passable() : bool
-	+is_empty() : bool
-	+is_walkable() : bool
-	-turns : int
-	+pos_x : size_t
-	+pos_y : size_t
-	+get_type() : std::string
-	+on_shoot_action(std::unique_ptr<FieldObject> previous) : std::unique_ptr<FieldObject>
-	-explode() : void
-	+on_step_action(RobotEvents& robot) : void
-	+print() : void
-	+tick() : void
-	+turn_refresh() : void
-}
-'/
 
 abstract class Character {
 	+~Character()
@@ -63,6 +44,11 @@ abstract class Command {
 }
 
 
+class CommandFactory {
+	+{static} create(const std::vector<std::string>& line, RobotInfo& robot) : std::unique_ptr<Command>
+}
+
+
 class CommandMove {
 	+CommandMove(Direction direction)
 	-_direction : Direction
@@ -70,20 +56,9 @@ class CommandMove {
 }
 
 
-class CommandPlaceBomb {
-	+execute(RobotActions& robot) : void
-}
-
-
-class CommandShoot {
-	+execute(RobotActions& robot) : void
-}
-
-
-class CommandTurn {
-	+CommandTurn(Rotation rotation)
-	-_rotation : Rotation
-	+execute(RobotActions& robot) : void
+abstract class Expression {
+	+~Expression()
+	+{abstract} evaluate(std::vector<std::string>::const_iterator begin, std::vector<std::string>::const_iterator end, RobotInfo& robot) : bool
 }
 
 
@@ -97,6 +72,11 @@ abstract class FieldObject {
 	+{abstract} on_step_action(RobotEvents& robot) : void
 	+{abstract} print() : void
 	+{abstract} turn_refresh() : void
+}
+
+
+class GeneralExpression {
+	+evaluate(std::vector<std::string>::const_iterator begin, std::vector<std::string>::const_iterator end, RobotInfo& robot) : bool
 }
 
 
@@ -133,43 +113,48 @@ class Interpreter {
 
 class Robot {
 	+Robot()
-	+Robot(size_t id, size_t team_id, size_t pos_x, size_t pos_y, Direction direction, std::unique_ptr<Interpreter> control_script, array<std::array<std::unique_ptr<FieldObject>, FIELD_SIZE>, FIELD_SIZE> battlefield_ptr, array<std::array<robot_id_t, FIELD_SIZE>, FIELD_SIZE> robotfield_ptr, std::map<robot_id_t, Robot>* robots)
 	+operatorbool() {query}
 	-_bomb : Bomb*
+	+get_bomb() : Bomb* {query}
 	-_look_dir : Direction
-	+look_direction() : Direction
+	+get_look_dir() : Direction {query}
+	+get_control_script() : Interpreter* {query}
 	-_robotfield_ptr : array<std::array<robot_id_t, FIELD_SIZE>, FIELD_SIZE>
 	-_battlefield_ptr : array<std::array<std::unique_ptr<FieldObject>, FIELD_SIZE>, FIELD_SIZE>
+	+get_battlefield_ptr() : battlefield_t* {query}
 	-_is_alive : bool
-	+can_move(Direction direction) : bool
-	+can_place_bomb() : bool
-	+is_alive() : bool
-	+is_low_health() : bool
-	+sees(std::string object_string) : bool
-	+sees_enemy() : bool
-	+id() : robot_id_t
+	+get_is_alive() : bool {query}
+	+get_id() : robot_id_t {query}
+	+get_robotfield_ptr() : robotfield_t* {query}
 	-_health : size_t
 	-_id : size_t
 	-_points : size_t
 	-_pos_x : size_t
 	-_pos_y : size_t
 	-_team_id : size_t
-	+points() : size_t
-	+team_id() : size_t
+	+get_health() : size_t {query}
+	+get_points() : size_t {query}
+	+get_pos_x() : size_t {query}
+	+get_pos_y() : size_t {query}
+	+get_team_id() : size_t {query}
+	+get_robots_ptr() : std::map<robot_id_t , Robot>* {query}
 	-_robots_ptr : std::map<robot_id_t, Robot>*
-	+script_file() : std::string
 	-_control_script : std::unique_ptr<Interpreter>
-	+act() : void
-	+collect_point() : void
 	-deal_bomb_damage(size_t& pos_x, size_t& pos_y, Direction direction) : void
-	+explode_bomb() : void
-	+heal() : void
-	+move(Direction direction) : void
-	+place_bomb() : void
 	+print(std::ostream& stream) : void {query}
-	+shoot() : void
-	+take_damage(size_t damage) : void
-	+turn(Rotation rotation) : void
+	+set_battlefield_ptr(array<std::array<std::unique_ptr<FieldObject>, FIELD_SIZE>, FIELD_SIZE> battlefield_ptr) : void
+	+set_bomb(Bomb* bomb) : void
+	+set_control_script(std::unique_ptr<Interpreter> control_script) : void
+	+set_health(size_t health) : void
+	+set_id(size_t id) : void
+	+set_is_alive(bool is_alive) : void
+	+set_look_dir(Direction look_dir) : void
+	+set_points(size_t points) : void
+	+set_pos_x(size_t pos_x) : void
+	+set_pos_y(size_t pos_y) : void
+	+set_robotfield_ptr(array<std::array<robot_id_t, FIELD_SIZE>, FIELD_SIZE> robotfield_ptr) : void
+	+set_robots_ptr(std::map<robot_id_t, Robot>* robots_ptr) : void
+	+set_team_id(size_t team_id) : void
 }
 
 
@@ -202,6 +187,33 @@ abstract class RobotInfo {
 }
 
 
+class RobotLogic {
+	+RobotLogic(Robot* robot_ptr)
+	+look_direction() : Direction
+	-_data : Robot*
+	+can_move(Direction direction) : bool
+	+can_place_bomb() : bool
+	+is_alive() : bool
+	+is_low_health() : bool
+	+sees(std::string object_string) : bool
+	+sees_enemy() : bool
+	+id() : robot_id_t
+	+points() : size_t
+	+team_id() : size_t
+	+script_file() : std::string
+	+act() : void
+	+collect_point() : void
+	-deal_bomb_damage(size_t& pos_x, size_t& pos_y, Direction direction) : void
+	+explode_bomb() : void
+	+heal() : void
+	+move(Direction direction) : void
+	+place_bomb() : void
+	+shoot() : void
+	+take_damage(size_t damage) : void
+	+turn(Rotation rotation) : void
+}
+
+
 enum Direction {
 	DOWN
 	LEFT
@@ -228,34 +240,25 @@ enum Rotation {
 
 /' Inheritance relationships '/
 
-Character <|-- Robot
+Character <|-- RobotLogic
 
 
 Command <|-- CommandMove
 
 
-Command <|-- CommandPlaceBomb
-
-
-Command <|-- CommandShoot
-
-
-Command <|-- CommandTurn
-
-
-FieldObject <|-- Bomb
+Expression <|-- GeneralExpression
 
 
 FieldObject <|-- Ground
 
 
-RobotActions <|-- Robot
+RobotActions <|-- RobotLogic
 
 
-RobotEvents <|-- Robot
+RobotEvents <|-- RobotLogic
 
 
-RobotInfo <|-- Robot
+RobotInfo <|-- RobotLogic
 
 
 
@@ -270,6 +273,9 @@ BattleController *-- GAME_MODE
 
 
 BattleController *-- Robot
+
+
+Bomb o-- RobotEvents
 
 
 CommandMove *-- Direction
@@ -293,15 +299,10 @@ Robot o-- Interpreter
 Robot *-- Robot
 
 
-/' Association '/
+RobotLogic o-- Robot
 
-Command o.. RobotActions
 
-FieldObject o.. RobotEvents
 
-Interpreter o.. RobotInfo
-
-Command o.. Interpreter
 
 
 
